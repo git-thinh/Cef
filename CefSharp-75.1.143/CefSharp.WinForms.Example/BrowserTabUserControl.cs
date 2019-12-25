@@ -89,7 +89,7 @@ namespace CefSharp.WinForms.Example
             CefExample.RegisterTestResources(browser);
 
             var version = String.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}", Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion);
-            DisplayOutput(version);
+            //DisplayOutput(version);
         }
 
         /// <summary>

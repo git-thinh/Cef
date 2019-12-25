@@ -16,7 +16,7 @@ namespace CefSharp.WinForms.Example
 {
     public partial class BrowserForm : Form
     {
-        private const string DefaultUrlForAddedTabs = "https://www.google.com";
+        private const string DefaultUrlForAddedTabs = "http://opencart.templatemela.com/OPCADD4/OPC094/";
 
         // Default to a small increment:
         private const double ZoomIncrement = 0.10;
@@ -28,7 +28,7 @@ namespace CefSharp.WinForms.Example
             InitializeComponent();
 
             var bitness = Environment.Is64BitProcess ? "x64" : "x86";
-            Text = "CefSharp.WinForms.Example - " + bitness;
+            Text = "";// "CefSharp.WinForms.Example - " + bitness;
             WindowState = FormWindowState.Maximized;
 
             Load += BrowserFormLoad;
@@ -55,7 +55,8 @@ namespace CefSharp.WinForms.Example
 
         private void BrowserFormLoad(object sender, EventArgs e)
         {
-            AddTab(CefExample.DefaultUrl);
+            AddTab(DefaultUrlForAddedTabs);
+            //AddTab(CefExample.DefaultUrl);
         }
 
         /// <summary>
