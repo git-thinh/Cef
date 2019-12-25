@@ -1,0 +1,5 @@
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp\bin\x86\Debug\CefSharp.dll
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp\bin\x86\Debug\CefSharp.pdb
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp\obj\x86\Debug\CefSharp.csprojAssemblyReference.cache
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp\obj\x86\Debug\CefSharp.dll
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp\obj\x86\Debug\CefSharp.pdb

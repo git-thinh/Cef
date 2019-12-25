@@ -1,0 +1,13 @@
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\bin\x86\Debug\CefSharp.Example.dll
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\bin\x86\Debug\CefSharp.Example.pdb
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\bin\x86\Debug\CefSharp.Core.dll
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\bin\x86\Debug\CefSharp.dll
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\bin\x86\Debug\CefSharp.Core.pdb
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\bin\x86\Debug\CefSharp.Core.xml
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\bin\x86\Debug\CefSharp.pdb
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\obj\x86\Debug\CefSharp.Example.csprojAssemblyReference.cache
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\obj\x86\Debug\CefSharp.Example.Properties.Resources.resources
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\obj\x86\Debug\CefSharp.Example.csproj.GenerateResource.cache
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\obj\x86\Debug\CefSharp.Example.csproj.CopyComplete
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\obj\x86\Debug\CefSharp.Example.dll
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.Example\obj\x86\Debug\CefSharp.Example.pdb

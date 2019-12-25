@@ -1,0 +1,12 @@
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.OffScreen\bin\x86\Debug\CefSharp.OffScreen.xml
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.OffScreen\bin\x86\Debug\CefSharp.OffScreen.dll
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.OffScreen\bin\x86\Debug\CefSharp.OffScreen.pdb
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.OffScreen\bin\x86\Debug\CefSharp.Core.dll
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.OffScreen\bin\x86\Debug\CefSharp.dll
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.OffScreen\bin\x86\Debug\CefSharp.Core.pdb
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.OffScreen\bin\x86\Debug\CefSharp.Core.xml
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.OffScreen\bin\x86\Debug\CefSharp.pdb
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.OffScreen\obj\x86\Debug\CefSharp.OffScreen.csprojAssemblyReference.cache
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.OffScreen\obj\x86\Debug\CefSharp.OffScreen.csproj.CopyComplete
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.OffScreen\obj\x86\Debug\CefSharp.OffScreen.dll
+D:\Projects\Cef\CefSharp-75.1.143\CefSharp.OffScreen\obj\x86\Debug\CefSharp.OffScreen.pdb
