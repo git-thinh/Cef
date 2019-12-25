@@ -98,7 +98,7 @@ namespace CefSharp.OffScreen.Example
                 // if one exists ignore it, wait for a new one to make sure we have the most up to date
                 await browser.ScreenshotAsync(true).ContinueWith(DisplayBitmap);
 
-                await LoadPageAsync(browser, "http://github.com");
+                await LoadPageAsync(browser, "https://github.com");
 
                 //Gets a wrapper around the underlying CefBrowser instance
                 var cefBrowser = browser.GetBrowser();

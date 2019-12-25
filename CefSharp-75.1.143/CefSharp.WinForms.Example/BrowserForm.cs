@@ -572,7 +572,7 @@ namespace CefSharp.WinForms.Example
                 {
                     var requestContext = control.Browser.GetBrowserHost().RequestContext;
 
-                    var dir = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\CefSharp.Example\Extensions");
+                    var dir = Path.Combine(AppContext.BaseDirectory, @"..\extensions");
                     dir = Path.GetFullPath(dir);
                     if (!Directory.Exists(dir))
                     {
