@@ -14,8 +14,13 @@ namespace CefSharp.Example.Handlers
     /// If you implement the IRequestHandler interface you will need to
     /// implement every method
     /// </summary>
-    public class ExampleRequestHandler : RequestHandler
+    public class TestRequestHandler : RequestHandler
     {
+        readonly string m_strUrlMain = string.Empty;
+        public TestRequestHandler(string strUrlMain) : base() {
+            m_strUrlMain = strUrlMain;
+        }
+
         public static readonly string VersionNumberString = String.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}",
             Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion);
 
@@ -103,17 +108,20 @@ namespace CefSharp.Example.Handlers
         {
             string url = request.Url;
             Console.WriteLine("----> " + url);
+            
+            
+            return new TestResourceRequestHandler(m_strUrlMain);
 
-            //NOTE: In most cases you examine the request.Url and only handle requests you are interested in
-            if (url.ToLower().StartsWith("https://cefsharp.example")
-                || url.ToLower().StartsWith(CefSharpSchemeHandlerFactory.SchemeName)
-                || url.ToLower().StartsWith("mailto:")
-                || url.ToLower().StartsWith("https://googlechrome.github.io/samples/service-worker/"))
-            {
-                return new ExampleResourceRequestHandler();
-            }
+            ////NOTE: In most cases you examine the request.Url and only handle requests you are interested in
+            //if (url.ToLower().StartsWith("https://cefsharp.example")
+            //    || url.ToLower().StartsWith(CefSharpSchemeHandlerFactory.SchemeName)
+            //    || url.ToLower().StartsWith("mailto:")
+            //    || url.ToLower().StartsWith("https://googlechrome.github.io/samples/service-worker/"))
+            //{
+            //    return new ExampleResourceRequestHandler();
+            //}
 
-            return null;
+            //return null;
         }
     }
 }

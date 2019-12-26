@@ -13,32 +13,68 @@ namespace CefSharp.Example
 {
     public static class CefExample
     {
-        //TODO: Revert after https://bitbucket.org/chromiumembedded/cef/issues/2685/networkservice-custom-scheme-unable-to
-        //has been fixed.
-        public const string BaseUrl = "https://cefsharp.example";
-        public const string DefaultUrl = BaseUrl + "/home.html";
-        public const string BindingTestUrl = BaseUrl + "/BindingTest.html";
-        public const string BindingTestSingleUrl = BaseUrl + "/BindingTestSingle.html";
-        public const string BindingTestsAsyncTaskUrl = BaseUrl + "/BindingTestsAsyncTask.html";
-        public const string LegacyBindingTestUrl = BaseUrl + "/LegacyBindingTest.html";
-        public const string PostMessageTestUrl = BaseUrl + "/PostMessageTest.html";
-        public const string PluginsTestUrl = BaseUrl + "/plugins.html";
-        public const string PopupTestUrl = BaseUrl + "/PopupTest.html";
-        public const string TooltipTestUrl = BaseUrl + "/TooltipTest.html";
-        public const string BasicSchemeTestUrl = BaseUrl + "/SchemeTest.html";
-        public const string ResponseFilterTestUrl = BaseUrl + "/ResponseFilterTest.html";
-        public const string DraggableRegionTestUrl = BaseUrl + "/DraggableRegionTest.html";
-        public const string DragDropCursorsTestUrl = BaseUrl + "/DragDropCursorsTest.html";
-        public const string CssAnimationTestUrl = BaseUrl + "/CssAnimationTest.html";
-        public const string CdmSupportTestUrl = BaseUrl + "/CdmSupportTest.html";
-        public const string TestResourceUrl = "http://test/resource/load";
-        public const string RenderProcessCrashedUrl = "http://processcrashed";
-        public const string TestUnicodeResourceUrl = "http://test/resource/loadUnicode";
-        public const string PopupParentUrl = "http://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_win_close";
+        public static void f_initDownload(AbstractCefSettings settings, IBrowserProcessHandler browserProcessHandler)
+        {
+            settings.RemoteDebuggingPort = 8088;
+            settings.CachePath = "cache";
 
-        // Use when debugging the actual SubProcess, to make breakpoints etc. inside that project work.
-        private static readonly bool DebuggingSubProcess = Debugger.IsAttached;
-        private static string PluginInformation = "";
+            //NOTE: The following function will set all three params
+            settings.SetOffScreenRenderingBestPerformanceArgs();
+            //settings.CefCommandLineArgs.Add("disable-gpu", "1");
+            //settings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
+            //settings.CefCommandLineArgs.Add("enable-begin-frame-scheduling", "1");
+
+            settings.CefCommandLineArgs.Add("disable-gpu-vsync", "1"); //Disable Vsync
+
+            //Audo play example
+            //settings.CefCommandLineArgs["autoplay-policy"] = "no-user-gesture-required";
+
+
+            // Off Screen rendering (WPF/Offscreen)
+            if (settings.WindowlessRenderingEnabled)
+            {
+                //Disable Direct Composition to test https://github.com/cefsharp/CefSharp/issues/1634
+                settings.CefCommandLineArgs.Add("disable-direct-composition", "1");
+
+                // DevTools doesn't seem to be working when this is enabled
+                // http://magpcss.org/ceforum/viewtopic.php?f=6&t=14095
+                //settings.CefCommandLineArgs.Add("enable-begin-frame-scheduling", "1");
+            }
+
+
+
+
+
+
+
+            //Enables Uncaught exception handler
+            settings.UncaughtExceptionStackSize = 10;
+
+            settings.LogSeverity = LogSeverity.Disable;
+
+            if (DebuggingSubProcess)
+            {
+                var architecture = Environment.Is64BitProcess ? "x64" : "x86";
+                //settings.BrowserSubprocessPath = "..\\..\\..\\..\\CefSharp.BrowserSubprocess\\bin\\" + architecture + "\\Debug\\CefSharp.BrowserSubprocess.exe";
+                settings.BrowserSubprocessPath = "CefSharp.BrowserSubprocess.exe";
+            }
+             
+
+
+
+            //This must be set before Cef.Initialized is called
+            CefSharpSettings.FocusedNodeChangedEnabled = true;
+
+            CefSharpSettings.SubprocessExitIfParentProcessClosed = true;
+
+            if (!Cef.Initialize(settings, performDependencyCheck: !DebuggingSubProcess, browserProcessHandler: browserProcessHandler))
+            {
+                throw new Exception("Unable to Initialize Cef");
+            }
+
+        }
+        
+        #region [ Comment ]
 
         public static void Init(AbstractCefSettings settings, IBrowserProcessHandler browserProcessHandler)
         {
@@ -284,5 +320,35 @@ namespace CefSharp.Example
                 handler.RegisterHandler(PluginsTestUrl, ResourceHandler.GetByteArray(PluginInformation, Encoding.UTF8));
             }
         }
+        
+        //TODO: Revert after https://bitbucket.org/chromiumembedded/cef/issues/2685/networkservice-custom-scheme-unable-to
+        //has been fixed.
+        public const string BaseUrl = "https://cefsharp.example";
+        public const string DefaultUrl = BaseUrl + "/home.html";
+        public const string BindingTestUrl = BaseUrl + "/BindingTest.html";
+        public const string BindingTestSingleUrl = BaseUrl + "/BindingTestSingle.html";
+        public const string BindingTestsAsyncTaskUrl = BaseUrl + "/BindingTestsAsyncTask.html";
+        public const string LegacyBindingTestUrl = BaseUrl + "/LegacyBindingTest.html";
+        public const string PostMessageTestUrl = BaseUrl + "/PostMessageTest.html";
+        public const string PluginsTestUrl = BaseUrl + "/plugins.html";
+        public const string PopupTestUrl = BaseUrl + "/PopupTest.html";
+        public const string TooltipTestUrl = BaseUrl + "/TooltipTest.html";
+        public const string BasicSchemeTestUrl = BaseUrl + "/SchemeTest.html";
+        public const string ResponseFilterTestUrl = BaseUrl + "/ResponseFilterTest.html";
+        public const string DraggableRegionTestUrl = BaseUrl + "/DraggableRegionTest.html";
+        public const string DragDropCursorsTestUrl = BaseUrl + "/DragDropCursorsTest.html";
+        public const string CssAnimationTestUrl = BaseUrl + "/CssAnimationTest.html";
+        public const string CdmSupportTestUrl = BaseUrl + "/CdmSupportTest.html";
+        public const string TestResourceUrl = "http://test/resource/load";
+        public const string RenderProcessCrashedUrl = "http://processcrashed";
+        public const string TestUnicodeResourceUrl = "http://test/resource/loadUnicode";
+        public const string PopupParentUrl = "http://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_win_close";
+
+        // Use when debugging the actual SubProcess, to make breakpoints etc. inside that project work.
+        private static readonly bool DebuggingSubProcess = Debugger.IsAttached;
+        private static string PluginInformation = "";
+
+        #endregion
+
     }
 }

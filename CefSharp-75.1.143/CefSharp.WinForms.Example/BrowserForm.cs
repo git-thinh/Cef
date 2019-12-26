@@ -16,7 +16,8 @@ namespace CefSharp.WinForms.Example
 {
     public partial class BrowserForm : Form
     {
-        private const string DefaultUrlForAddedTabs = "http://opencart.templatemela.com/OPCADD4/OPC094/";
+        //private const string DefaultUrlForAddedTabs = "http://opencart.templatemela.com/OPCADD4/OPC094/";
+        private const string DefaultUrlForAddedTabs = "http://192.168.10.54:55555/";
 
         // Default to a small increment:
         private const double ZoomIncrement = 0.10;

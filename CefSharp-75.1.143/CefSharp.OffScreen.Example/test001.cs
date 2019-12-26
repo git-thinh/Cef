@@ -12,11 +12,12 @@ using CefSharp.Example.Handlers;
 
 namespace CefSharp.OffScreen.Example
 {
-    public class Program
+    public class test001
     {
-        private const string TestUrl = "https://www.google.com/";
+        //private const string TestUrl = "https://www.google.com/";
+        private const string TestUrl = "http://192.168.10.54:55555/";
 
-        public static int Main(string[] args)
+        public static int run(string[] args)
         {
             Console.WriteLine("This example application will load {0}, take a screenshot, and save it to your desktop.", TestUrl);
             Console.WriteLine("You may see a lot of Chromium debugging output, please wait...");
