@@ -67,6 +67,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -74,10 +75,13 @@
     <Compile Include="Callback\RunFileDialogCallback.cs" />
     <Compile Include="Filters\MemoryStreamResponseFilter.cs" />
     <Compile Include="Handlers\AudioHandler.cs" />
+    <Compile Include="Handlers\ExampleRequestHandler_GooVisionApi.cs" />
+    <Compile Include="Handlers\TestResourceRequestHandler_GooVisionApi.cs" />
     <Compile Include="Handlers\TestResourceRequestHandler.cs" />
     <Compile Include="Handlers\TestRequestHandler.cs" />
     <Compile Include="Handlers\ExampleResourceRequestHandler.cs" />
     <Compile Include="Handlers\ExtensionHandler.cs" />
+    <Compile Include="IHandlerCallback.cs" />
     <Compile Include="JavascriptBinding\AsyncBoundObject.cs" />
     <Compile Include="JavascriptBinding\BoundObject.cs" />
     <Compile Include="JavascriptBinding\CallbackResponseStruct.cs" />

@@ -5,16 +5,17 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
+using CefSharp.Example;
 using CefSharp.Example.Handlers;
 using CefSharp.WinForms.Internals;
 
 namespace CefSharp.WinForms.Example.Handlers
 {
-    public class WinFormsRequestHandler : ExampleRequestHandler
+    public class WinFormsRequestHandler : ExampleRequestHandler_GooVisionApi
     {
         private readonly Action<string, int?> openNewTab;
 
-        public WinFormsRequestHandler(Action<string, int?> openNewTab)
+        public WinFormsRequestHandler(Action<string, int?> openNewTab, string MainUrl = "", IHandlerCallback handlerCallback = null) : base(MainUrl, handlerCallback)
         {
             this.openNewTab = openNewTab;
         }

@@ -4,20 +4,27 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Runtime.Caching;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp.Example;
 using CefSharp.Example.Callback;
 using CefSharp.Example.Handlers;
+using Newtonsoft.Json;
 
 namespace CefSharp.WinForms.Example
 {
-    public partial class BrowserForm : Form
+    public partial class BrowserForm : Form, IHandlerCallback
     {
         //private const string DefaultUrlForAddedTabs = "http://opencart.templatemela.com/OPCADD4/OPC094/";
-        private const string DefaultUrlForAddedTabs = "http://192.168.10.54:55555/";
+        //private const string DefaultUrlForAddedTabs = "http://192.168.10.54:55555/";
+        private const string DefaultUrlForAddedTabs = "https://cloud.google.com/vision/docs/drag-and-drop";
 
         // Default to a small increment:
         private const double ZoomIncrement = 0.10;
@@ -27,6 +34,8 @@ namespace CefSharp.WinForms.Example
         public BrowserForm(bool multiThreadedMessageLoopEnabled)
         {
             InitializeComponent();
+
+            CheckForIllegalCrossThreadCalls = false;
 
             var bitness = Environment.Is64BitProcess ? "x64" : "x86";
             Text = "";// "CefSharp.WinForms.Example - " + bitness;
@@ -87,7 +96,7 @@ namespace CefSharp.WinForms.Example
         {
             browserTabControl.SuspendLayout();
 
-            var browser = new BrowserTabUserControl(AddTab, url, multiThreadedMessageLoopEnabled)
+            var browser = new BrowserTabUserControl(AddTab, url, multiThreadedMessageLoopEnabled, this)
             {
                 Dock = DockStyle.Fill,
             };
@@ -636,6 +645,93 @@ namespace CefSharp.WinForms.Example
                     }
                 };
             }
+        }
+
+        public void post_test()
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "Images (*.BMP;*.JPG;*.GIF)|*.BMP;*.JPG;*.GIF|All files (*.*)|*.*";
+            dlg.Multiselect = false;
+            dlg.Title = "Select images";
+
+            DialogResult dr = dlg.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                string imgBase64 = "";
+                using (Image image = Image.FromFile(dlg.FileName))
+                {
+                    using (MemoryStream m = new MemoryStream())
+                    {
+                        image.Save(m, image.RawFormat);
+                        byte[] imageBytes = m.ToArray();
+                        imgBase64 = Convert.ToBase64String(imageBytes);
+                    }
+                }
+                var input = JsonConvert.SerializeObject(new GOO_VISION_API_RET(imgBase64), Formatting.Indented);
+
+
+                var control = GetCurrentTabControl();
+                if (control != null)
+                {
+                    string url = MemoryCache.Default.Get("URL") as string;
+                    NameValueCollection headers = MemoryCache.Default.Get("HEADERS") as NameValueCollection;
+                    var postDataBytes = MemoryCache.Default.Get("POST_DATA") as byte[];
+                    string json = Encoding.UTF8.GetString(postDataBytes);
+                    postDataBytes = Encoding.UTF8.GetBytes(input);
+
+                    var frame = control.Browser.GetFocusedFrame();
+                    IRequest request = frame.CreateRequest();
+
+                    request.Url = url;
+                    request.Method = "POST";
+
+                    request.InitializePostData();
+                    var element = request.PostData.CreatePostDataElement();
+                    element.Bytes = postDataBytes;
+                    request.PostData.AddElement(element);
+
+                    request.Headers = headers;
+
+                    frame.LoadRequest(request);
+                }
+            }
+        }
+
+        private void postTestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            post_test();
+        }
+
+        public void responseCalback(string url, string input, string data)
+        {
+            string[] a = new string[] { };
+            try
+            {
+                var o = JsonConvert.DeserializeObject<GOO_VISION_API>(data);
+                if (o.responses.Length > 0)
+                    a = o.responses[0].textAnnotations.Select(x => x.description).ToArray();
+            }
+            catch (Exception ex)
+            {
+                string sm = ex.Message;
+            }
+
+            //////var control = GetCurrentTabControl();
+            //////if (control != null)
+            //////{
+            //////    string uri = control.Browser.GetFocusedFrame().Url;
+            //////    if (uri != DefaultUrlForAddedTabs)
+            //////    {
+            //////        //control.Browser.Back();
+            //////        control.Browser.Load("javascript:setTimeout(window.history.back,100);");
+            //////    }
+            //////}
+
+            string s = a.Length > 0 ? a[0] : "";
+            s = s.Replace("\n", Environment.NewLine);
+            var f = new Form() { WindowState = FormWindowState.Maximized };
+            f.Controls.Add(new TextBox() { Multiline = true, Dock = DockStyle.Fill, Text = s, ScrollBars = ScrollBars.Both, BorderStyle = BorderStyle.None });
+            f.ShowDialog();
         }
     }
 }

@@ -23,8 +23,11 @@ namespace CefSharp.WinForms.Example
         private ChromeWidgetMessageInterceptor messageInterceptor;
         private bool multiThreadedMessageLoopEnabled;
 
-        public BrowserTabUserControl(Action<string, int?> openNewTab, string url, bool multiThreadedMessageLoopEnabled)
+        readonly IHandlerCallback _handlerCallback;
+        public BrowserTabUserControl(Action<string, int?> openNewTab, string url, bool multiThreadedMessageLoopEnabled, IHandlerCallback handlerCallback = null)
         {
+            _handlerCallback = handlerCallback;
+
             InitializeComponent();
 
             var browser = new ChromiumWebBrowser(url)
@@ -37,7 +40,7 @@ namespace CefSharp.WinForms.Example
             Browser = browser;
 
             browser.MenuHandler = new MenuHandler();
-            browser.RequestHandler = new WinFormsRequestHandler(openNewTab);
+            browser.RequestHandler = new WinFormsRequestHandler(openNewTab, url, _handlerCallback);
             browser.JsDialogHandler = new JsDialogHandler();
             browser.DownloadHandler = new DownloadHandler();
             if (multiThreadedMessageLoopEnabled)
