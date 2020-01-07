@@ -3,6 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp.Example;
@@ -12,11 +13,49 @@ using CefSharp.WinForms.Example.Minimal;
 
 namespace CefSharp.WinForms.Example
 {
+    public class OCR_CMT
+    {
+        public string address { set; get; } 
+        public string id { set; get; } 
+        public string fullname { set; get; } 
+        public string birthday { set; get; }
+        public string expiry { set; get; } 
+        public string gender { set; get; }
+        public string ethnicity { set; get; } 
+        public string issue_by { set; get; } 
+        public string issue_date { set; get; } 
+        public string religion { set; get; }
+
+        public string image { set; get; } 
+        public int status_code { set; get; } 
+        public string status { set; get; } 
+
+        public OCR_CMT()
+        {
+            address = "N/A";  // Thuận Tốn, Đa Tốn, Gia Lâm, Hà Nội",
+            id = "N/A";  //012925499",
+            fullname = "N/A";  //ĐÀO THẾ LONG",
+            birthday = "N/A";  //08-02-1992",
+            expiry = "N/A";  //N/A",
+            gender = "N/A";  //N/A",
+            ethnicity = "N/A";  //Kinh",
+            issue_by = "N/A";  //TP Hà Nội",
+            issue_date = "N/A";  //11-10-2006",
+            religion = "N/A";  //Không",
+            image = "N/A";  //": 2,
+            status_code = 0;  //": 2,
+            status = "fail";  //success"
+        }
+    }
+
+
     public class Program
     {
         [STAThread]
         public static int Main(string[] args)
         {
+
+            TcpServer tcpServer = new TcpServer();
             const bool simpleSubProcess = false;
 
             Cef.EnableHighDPISupport();
@@ -45,6 +84,7 @@ namespace CefSharp.WinForms.Example
 
                 Cef.Initialize(settings);
 
+                // replace the IP with your system IP Address...
                 var browser = new SimpleBrowserForm(true);
                 Application.Run(browser);
             }
@@ -63,7 +103,7 @@ namespace CefSharp.WinForms.Example
                 const bool multiThreadedMessageLoop = true;
                 const bool externalMessagePump = false;
 
-                var browser = new BrowserForm(multiThreadedMessageLoop);
+                var browser = new BrowserForm(multiThreadedMessageLoop, tcpServer);
                 //var browser = new SimpleBrowserForm(multiThreadedMessageLoop);
                 //var browser = new TabulationDemoForm();
 
@@ -94,6 +134,10 @@ namespace CefSharp.WinForms.Example
                 settings.ExternalMessagePump = externalMessagePump;
 
                 CefExample.Init(settings, browserProcessHandler: browserProcessHandler);
+
+                tcpServer.HandlerCallback = browser;
+                Thread t = new Thread(tcpServer.StartListener);
+                t.Start();
 
                 //Application.Run(new MultiFormAppContext(multiThreadedMessageLoop));
                 Application.Run(browser);

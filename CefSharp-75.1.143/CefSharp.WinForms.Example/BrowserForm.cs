@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -31,10 +32,12 @@ namespace CefSharp.WinForms.Example
 
         private bool multiThreadedMessageLoopEnabled;
 
-        public BrowserForm(bool multiThreadedMessageLoopEnabled)
+        readonly ITcpClient _tcpClient;
+        public BrowserForm(bool multiThreadedMessageLoopEnabled, ITcpClient tcpClient)
         {
             InitializeComponent();
 
+            _tcpClient = tcpClient;
             CheckForIllegalCrossThreadCalls = false;
 
             var bitness = Environment.Is64BitProcess ? "x64" : "x86";
@@ -702,19 +705,123 @@ namespace CefSharp.WinForms.Example
             post_test();
         }
 
+        static string root = ConfigurationManager.AppSettings["ROOT_PATH"];
+        OCR_BUF ocr = null;
+        public void requestOcr(string fileImage)
+        {
+            ocr = null;
+            if (fileImage.Split(';').Length == 2)
+            {
+                ocr = new OCR_BUF();
+                ocr.files = fileImage.Split(';');
+                postApiOcr(ocr.files[0]);
+            }
+        }
+
+        void postApiOcr(string fileImage)
+        {
+            string file = Path.Combine(root, fileImage);
+            if (File.Exists(file))
+            {
+                string imgBase64 = "";
+                using (Image image = Image.FromFile(file))
+                {
+                    using (MemoryStream m = new MemoryStream())
+                    {
+                        image.Save(m, image.RawFormat);
+                        byte[] imageBytes = m.ToArray();
+                        imgBase64 = Convert.ToBase64String(imageBytes);
+                    }
+                }
+                var input = JsonConvert.SerializeObject(new GOO_VISION_API_RET(imgBase64), Formatting.Indented);
+
+                var control = GetCurrentTabControl();
+                if (control != null)
+                {
+                    string url = MemoryCache.Default.Get("URL") as string;
+                    NameValueCollection headers = MemoryCache.Default.Get("HEADERS") as NameValueCollection;
+                    var postDataBytes = MemoryCache.Default.Get("POST_DATA") as byte[];
+                    string json = Encoding.UTF8.GetString(postDataBytes);
+                    postDataBytes = Encoding.UTF8.GetBytes(input);
+
+                    var frame = control.Browser.GetFocusedFrame();
+                    IRequest request = frame.CreateRequest();
+
+                    request.Url = url;
+                    request.Method = "POST";
+
+                    request.InitializePostData();
+                    var element = request.PostData.CreatePostDataElement();
+                    element.Bytes = postDataBytes;
+                    request.PostData.AddElement(element);
+
+                    request.Headers = headers;
+
+                    frame.LoadRequest(request);
+                }
+            }
+            else
+            {
+                responseCalback(fileImage, "", "");
+            }
+        }
+
         public void responseCalback(string url, string input, string data)
         {
+            if (ocr == null) return;
+
+            string s = "";
             string[] a = new string[] { };
-            try
-            {
-                var o = JsonConvert.DeserializeObject<GOO_VISION_API>(data);
-                if (o.responses.Length > 0)
-                    a = o.responses[0].textAnnotations.Select(x => x.description).ToArray();
+            if (ocr.DataFront == null)
+            { 
+                a = new string[] { };
+                try
+                {
+                    var o = JsonConvert.DeserializeObject<GOO_VISION_API>(data);
+                    if (o.responses.Length > 0)
+                        a = o.responses[0].textAnnotations.Select(x => x.description).ToArray();
+                    if (a.Length > 0) s = a[0];
+                }
+                catch (Exception ex)
+                {
+                    s = "ERROR:" + ex.Message;
+                }
+
+                ocr.DataFront = s;
+                postApiOcr(ocr.files[1]);
             }
-            catch (Exception ex)
+            else
             {
-                string sm = ex.Message;
+                a = new string[] { };
+                try
+                {
+                    var o = JsonConvert.DeserializeObject<GOO_VISION_API>(data);
+                    if (o.responses.Length > 0)
+                        a = o.responses[0].textAnnotations.Select(x => x.description).ToArray();
+                    if (a.Length > 0) s = a[0];
+                }
+                catch (Exception ex)
+                {
+                    s = "ERROR:" + ex.Message;
+                }
+
+                ocr.DataBack = s;
+                string json = JsonConvert.SerializeObject(ocr, Formatting.Indented);
+                ocr = null;
+                _tcpClient.SendOcrResult(json);
             }
+
+            //string[] a = new string[] { };
+            //try
+            //{
+            //    var o = JsonConvert.DeserializeObject<GOO_VISION_API>(data);
+            //    if (o.responses.Length > 0)
+            //        a = o.responses[0].textAnnotations.Select(x => x.description).ToArray();
+            //}
+            //catch (Exception ex)
+            //{
+            //    string sm = ex.Message;
+            //}
 
             //////var control = GetCurrentTabControl();
             //////if (control != null)
@@ -727,11 +834,18 @@ namespace CefSharp.WinForms.Example
             //////    }
             //////}
 
-            string s = a.Length > 0 ? a[0] : "";
-            s = s.Replace("\n", Environment.NewLine);
-            var f = new Form() { WindowState = FormWindowState.Maximized };
-            f.Controls.Add(new TextBox() { Multiline = true, Dock = DockStyle.Fill, Text = s, ScrollBars = ScrollBars.Both, BorderStyle = BorderStyle.None });
-            f.ShowDialog();
+            //string s = a.Length > 0 ? a[0] : "";
+            //s = s.Replace("\n", Environment.NewLine);
+            //var f = new Form() { WindowState = FormWindowState.Maximized };
+            //f.Controls.Add(new TextBox() { Multiline = true, Dock = DockStyle.Fill, Text = s, ScrollBars = ScrollBars.Both, BorderStyle = BorderStyle.None });
+            //f.ShowDialog();
         }
+    }
+
+    public class OCR_BUF
+    {
+        public string[] files { set; get; }
+        public string DataFront { set; get; }
+        public string DataBack { set; get; }
     }
 }

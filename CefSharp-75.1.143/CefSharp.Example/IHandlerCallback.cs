@@ -8,6 +8,7 @@ namespace CefSharp.Example
 {
     public interface IHandlerCallback
     {
+        void requestOcr(string fileImage);
         void responseCalback(string url, string input, string data);
     }
 }
