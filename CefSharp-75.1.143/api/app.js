@@ -13,6 +13,18 @@ const _JOB = require('cron').CronJob;
 const _FETCH = require('node-fetch');
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
+var _REQUEST = require('request');
+var _PROGRESS = require('request-progress');
+
+const ___DOWNLOAD_IMAGE = function (uri, path, onProgress, onResponse, onError, onEnd) {
+    _PROGRESS(_REQUEST(uri))
+        .on('progress', onProgress)
+        .on('response', onResponse)
+        .on('error', onError)
+        .on('end', onEnd)
+        .pipe(_FS.createWriteStream(path))
+};
+
 //----------------------------------------------------------------------------
 
 let IP___LOCAL = '';
@@ -48,45 +60,63 @@ const ___guid = function () {
 
 const ___MSG_INPUT = [];
 const ___MSG_OUTPUT = {};
-new _JOB('* * * * * *', function () {
+new _JOB('* * * * * *', async function () {
     if (___MSG_INPUT.length > 0) {
         const m = ___MSG_INPUT.shift();
         if (m) {
             const id = m.id, front_side = m.front_side, back_side = m.back_side, client = m.client;
-            const key = front_side + ';' + back_side;
-            ___MSG_OUTPUT[key] = client;
-            _OCR_CLIENT.write(key);
+
+            const a = front_side.split('/');
+            const fileName = a[a.length - 1];
+
+            ___DOWNLOAD_IMAGE(front_side, fileName, function (state) {
+                console.log("progress", state);
+            }, function (response) {
+                console.log("status code", response.statusCode);
+            }, function (error) {
+                console.log("error", error);
+            }, function () {
+                console.log("done");
+            });
+
+            console.log(front_side, fileName); // true
+            //console.log(d1.status); // true
+            //console.log(d1.error); // ''
+
+            //const key = front_side + ';' + back_side;
+            //___MSG_OUTPUT[key] = client;
+            //_OCR_CLIENT.write(key);
         }
     }
 }).start();
 
 var _OCR_CLIENT = new _NET.Socket();
-_OCR_CLIENT.connect(1501, '127.0.0.1', function () {
-    _OCR_CLIENT.on('error', function (error) {
-        //console.log('Error : ' + error.message);
-        //Raise client distroy connection
-    });
+////_OCR_CLIENT.connect(1501, '127.0.0.1', function () {
+////    _OCR_CLIENT.on('error', function (error) {
+////        //console.log('Error : ' + error.message);
+////        //Raise client distroy connection
+////    });
 
-    //console.log('Connected');
-    //_OCR_CLIENT.write('1.jpg;2.jpg');
-});
+////    //console.log('Connected');
+////    //_OCR_CLIENT.write('1.jpg;2.jpg');
+////});
 
-_OCR_CLIENT.on('data', function (data) {
-    const o = JSON.parse(data);
-    console.log('Received: ', o);
-    if (o && o.files && o.files.length == 2) {
-        const key = o.files.join(';');
-        if (___MSG_OUTPUT[key]) {
-            ___MSG_OUTPUT[key].json(o);
-            delete ___MSG_OUTPUT[key];
-        }
-    }
-    //_OCR_CLIENT.destroy(); // kill client after server's response
-});
+////_OCR_CLIENT.on('data', function (data) {
+////    const o = JSON.parse(data);
+////    console.log('Received: ', o);
+////    if (o && o.files && o.files.length == 2) {
+////        const key = o.files.join(';');
+////        if (___MSG_OUTPUT[key]) {
+////            ___MSG_OUTPUT[key].json(o);
+////            delete ___MSG_OUTPUT[key];
+////        }
+////    }
+////    //_OCR_CLIENT.destroy(); // kill client after server's response
+////});
 
-_OCR_CLIENT.on('close', function () {
-    console.log('Connection closed');
-});
+////_OCR_CLIENT.on('close', function () {
+////    console.log('Connection closed');
+////});
 
 //#endregion
 
