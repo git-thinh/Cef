@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp.Example;
@@ -23,6 +24,8 @@ namespace CefSharp.WinForms.Example
 {
     public partial class BrowserForm : Form, IHandlerCallback
     {
+        const bool VISIBLE_TOOLBAR = false;
+
         //private const string DefaultUrlForAddedTabs = "http://opencart.templatemela.com/OPCADD4/OPC094/";
         //private const string DefaultUrlForAddedTabs = "http://192.168.10.54:55555/";
         private const string DefaultUrlForAddedTabs = "https://cloud.google.com/vision/docs/drag-and-drop";
@@ -36,6 +39,8 @@ namespace CefSharp.WinForms.Example
         public BrowserForm(bool multiThreadedMessageLoopEnabled, ITcpClient tcpClient)
         {
             InitializeComponent();
+
+            
 
             _tcpClient = tcpClient;
             CheckForIllegalCrossThreadCalls = false;
@@ -51,6 +56,8 @@ namespace CefSharp.WinForms.Example
             ResizeEnd += (s, e) => ResumeLayout(true);
 
             this.multiThreadedMessageLoopEnabled = multiThreadedMessageLoopEnabled;
+
+            this.menuStrip1.Visible = false;
         }
 
         public IContainer Components
@@ -114,6 +121,7 @@ namespace CefSharp.WinForms.Example
             browser.CreateControl();
 
             tabPage.Controls.Add(browser);
+            browser.Visible_Toolbar(VISIBLE_TOOLBAR );
 
             if (insertIndex == null)
             {

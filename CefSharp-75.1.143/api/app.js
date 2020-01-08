@@ -3,6 +3,7 @@
 
 const ___ROOT_IMAGE = 'C:/Git/OCR/OCR_Accord.Tesseract/data-test/cmt';
 const ___PORT_API = 1502
+const ___URL_OCR_ENGINE = 'http://127.0.0.1:1501?files=';
 
 const _NET = require('net');
 const _PATH = require('path');
@@ -55,6 +56,9 @@ const ___guid = function () {
     });
 };
 
+const ___yyyyMMddHHmmss = function () {
+    return (new Date().toISOString().slice(-24).replace(/\D/g, '').slice(0, 8)) + (new Date().toTimeString().split(' ')[0].replace(/\D/g, ''));
+};
 //#endregion
 
 //#region [ JOB ]
@@ -67,12 +71,19 @@ new _JOB('* * * * * *', async function () {
         if (m) {
             const id = m.id, front_side = m.front_side, back_side = m.back_side, client = m.client;
 
+            const time_ = ___yyyyMMddHHmmss();
             let a1 = front_side.split('/');
-            let fileName1 = a1[a1.length - 1];
+            let f1 = a1[a1.length - 1];
             let a2 = back_side.split('/');
-            let fileName2 = a2[a2.length - 1];
+            let f2 = a2[a2.length - 1];
+            a1 = f1.split('.');
+            f1 = f1.substr(0, f1.length - a1[a1.length - 1].length - 1) + '_' + time_ + '.' + a1[a1.length - 1];
+            a2 = f2.split('.');
+            f2 = f2.substr(0, f2.length - a2[a2.length - 1].length - 1) + '_' + time_ + '.' + a2[a2.length - 1];
 
-            ___DOWNLOAD_IMAGE(front_side, fileName1, function (state1) {
+            //console.log(f1, f2);
+
+            ___DOWNLOAD_IMAGE(front_side, f1, function (state1) {
                 console.log("progress", state1);
             }, function (response1) {
                 console.log("status code", response1.statusCode);
@@ -83,7 +94,7 @@ new _JOB('* * * * * *', async function () {
                 console.log("done");
                 //client.json({ ok: true });
 
-                ___DOWNLOAD_IMAGE(back_side, fileName2, function (state2) {
+                ___DOWNLOAD_IMAGE(back_side, f2, function (state2) {
                     console.log("progress", state2);
                 }, function (response2) {
                     console.log("status code", response2.statusCode);
@@ -93,50 +104,29 @@ new _JOB('* * * * * *', async function () {
                 }, function () {
                     console.log("done");
 
-                    const key = fileName1 + ';' + fileName2;
-                    ___MSG_OUTPUT[key] = client;
-                    _OCR_CLIENT.write(key);
+                    const key = f1 + ';' + f2;
                     console.log(key);
+                    ___MSG_OUTPUT[key] = client;
+
+                        _FETCH(___URL_OCR_ENGINE + key)
+                            .then(res => res.text())
+                            .then(text => {
+                                console.log(text);
+                                if (text == 'INTERNAL_SERVER_ERROR' || text == 'NOT_FOUND') {
+
+                                    if (___MSG_OUTPUT[key]) {
+                                        ___MSG_OUTPUT[key].json({ ok: false, message: text });
+                                        delete ___MSG_OUTPUT[key];
+                                    }
+
+                                }
+                            });
                 });
+
             });
-
-            //console.log(d1.status); // true
-            //console.log(d1.error); // ''
-
-            //const key = front_side + ';' + back_side;
-            //___MSG_OUTPUT[key] = client;
-            //_OCR_CLIENT.write(key);
         }
     }
 }).start();
-
-var _OCR_CLIENT = new _NET.Socket();
-_OCR_CLIENT.connect(1501, '127.0.0.1', function () {
-    _OCR_CLIENT.on('error', function (error) {
-        //console.log('Error : ' + error.message);
-        //Raise client distroy connection
-    });
-
-    //console.log('Connected');
-    //_OCR_CLIENT.write('1.jpg;2.jpg');
-});
-
-_OCR_CLIENT.on('data', function (data) {
-    const o = JSON.parse(data);
-    console.log('Received: ', o);
-    if (o && o.files && o.files.length == 2) {
-        const key = o.files.join(';');
-        if (___MSG_OUTPUT[key]) {
-            ___MSG_OUTPUT[key].json(o);
-            delete ___MSG_OUTPUT[key];
-        }
-    }
-    //_OCR_CLIENT.destroy(); // kill client after server's response
-});
-
-_OCR_CLIENT.on('close', function () {
-    console.log('Connection closed');
-});
 
 //#endregion
 
@@ -172,6 +162,21 @@ _HTTP_APP.get('/api/ocr', function (req, res) {
     } else {
         res.json({ ok: false, message: 'Url format are as follow: api/ocr?front_side=http://...&back_side=http://...' });
     }
+});
+
+_HTTP_APP.post('/api/ocr-cef', function (req, res) {
+    const o = req.body;
+    console.log(o);
+    
+    if (o && o.files && o.files.length == 2) {
+        const key = o.files.join(';');
+        if (___MSG_OUTPUT[key]) {
+            ___MSG_OUTPUT[key].json(o);
+            delete ___MSG_OUTPUT[key];
+        }
+    }
+
+    res.json({ ok: true, time: new Date() });
 });
 
 _HTTP_SERVER.listen(___PORT_API);

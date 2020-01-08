@@ -46,7 +46,7 @@
     <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <OutputPath>..\..\Build\Releasex86\</OutputPath>
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
@@ -67,6 +67,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -105,6 +106,7 @@
     <Compile Include="InputBox.Designer.cs">
       <DependentUpon>InputBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="ITcpClient.cs" />
     <Compile Include="Minimal\MultiFormAppContext.cs" />
     <Compile Include="Minimal\SimpleBrowserForm.cs">
       <SubType>Form</SubType>
@@ -126,6 +128,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ApiServer.cs" />
     <Compile Include="TcpServer.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +181,10 @@
     <None Include="Resources\chromium-256.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\SimpleHttpServer\SimpleHttpServer\SimpleHttpServer.csproj">
+      <Project>{9e139539-c272-488a-bfcf-caddf458df9d}</Project>
+      <Name>SimpleHttpServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CefSharp.Core\CefSharp.Core.vcxproj">
       <Project>{7b495581-2271-4f41-9476-acb86e8c864f}</Project>
       <Name>CefSharp.Core</Name>

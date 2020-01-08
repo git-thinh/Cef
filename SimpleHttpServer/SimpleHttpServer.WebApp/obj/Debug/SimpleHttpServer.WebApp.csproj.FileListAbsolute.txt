@@ -1,0 +1,14 @@
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\obj\Debug\SimpleHttpServer.WebApp.csprojAssemblyReference.cache
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\bin\Debug\Resources\Pages\404.html
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\bin\Debug\Resources\Pages\500.html
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\bin\Debug\SimpleHttpServer.WebApp.exe.config
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\bin\Debug\SimpleHttpServer.WebApp.exe
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\bin\Debug\SimpleHttpServer.WebApp.pdb
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\bin\Debug\SimpleHttpServer.dll
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\bin\Debug\log4net.dll
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\bin\Debug\SimpleHttpServer.pdb
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\bin\Debug\SimpleHttpServer.dll.config
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\bin\Debug\log4net.xml
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\obj\Debug\SimpleHttpServer.WebApp.csproj.CopyComplete
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\obj\Debug\SimpleHttpServer.WebApp.exe
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer.WebApp\obj\Debug\SimpleHttpServer.WebApp.pdb

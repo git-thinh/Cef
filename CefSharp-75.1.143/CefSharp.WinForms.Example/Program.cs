@@ -3,6 +3,7 @@
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 using System;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -54,8 +55,23 @@ namespace CefSharp.WinForms.Example
         [STAThread]
         public static int Main(string[] args)
         {
+            //string p = "";
+            //p = "^/(?=[^/]*$)";
+            //p = "/?files=(.*)";
+            ////p = "/?files=(.*)&test2=(.*)";
 
-            TcpServer tcpServer = new TcpServer();
+            //string s = "";
+            //s = "/";
+            //s = "/?files=1.jpg;2.jpg&test2=1";
+            ////s = "/api/ocr";
+
+            //bool ok;
+            //if (Regex.Match(s, p).Success)
+            //    ok = true;
+            //else
+            //    ok = false;
+
+            ApiServer apiServer = new ApiServer();
             const bool simpleSubProcess = false;
 
             Cef.EnableHighDPISupport();
@@ -103,7 +119,7 @@ namespace CefSharp.WinForms.Example
                 const bool multiThreadedMessageLoop = true;
                 const bool externalMessagePump = false;
 
-                var browser = new BrowserForm(multiThreadedMessageLoop, tcpServer);
+                var browser = new BrowserForm(multiThreadedMessageLoop, apiServer);
                 //var browser = new SimpleBrowserForm(multiThreadedMessageLoop);
                 //var browser = new TabulationDemoForm();
 
@@ -135,9 +151,8 @@ namespace CefSharp.WinForms.Example
 
                 CefExample.Init(settings, browserProcessHandler: browserProcessHandler);
 
-                tcpServer.HandlerCallback = browser;
-                Thread t = new Thread(tcpServer.StartListener);
-                t.Start();
+                apiServer.HandlerCallback = browser;
+                apiServer.Start(); 
 
                 //Application.Run(new MultiFormAppContext(multiThreadedMessageLoop));
                 Application.Run(browser);

@@ -213,6 +213,10 @@ namespace CefSharp.WinForms.Example
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+        public void Visible_Toolbar(bool visible = false) {
+            this.toolStrip1.Visible = visible;
+        }
+
         private void OnIsBrowserInitializedChanged(object sender, EventArgs e)
         {
             //Get the underlying browser host wrapper
