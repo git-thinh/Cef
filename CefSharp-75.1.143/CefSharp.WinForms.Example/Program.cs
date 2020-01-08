@@ -3,6 +3,10 @@
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 using System;
+using System.Configuration;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,20 +20,20 @@ namespace CefSharp.WinForms.Example
 {
     public class OCR_CMT
     {
-        public string address { set; get; } 
-        public string id { set; get; } 
-        public string fullname { set; get; } 
+        public string address { set; get; }
+        public string id { set; get; }
+        public string fullname { set; get; }
         public string birthday { set; get; }
-        public string expiry { set; get; } 
+        public string expiry { set; get; }
         public string gender { set; get; }
-        public string ethnicity { set; get; } 
-        public string issue_by { set; get; } 
-        public string issue_date { set; get; } 
+        public string ethnicity { set; get; }
+        public string issue_by { set; get; }
+        public string issue_date { set; get; }
         public string religion { set; get; }
 
-        public string image { set; get; } 
-        public int status_code { set; get; } 
-        public string status { set; get; } 
+        public string image { set; get; }
+        public int status_code { set; get; }
+        public string status { set; get; }
 
         public OCR_CMT()
         {
@@ -55,6 +59,9 @@ namespace CefSharp.WinForms.Example
         [STAThread]
         public static int Main(string[] args)
         {
+            string root = ConfigurationManager.AppSettings["ROOT_PATH"];
+            if (!Directory.Exists(root)) Directory.CreateDirectory(root);
+
             //string p = "";
             //p = "^/(?=[^/]*$)";
             //p = "/?files=(.*)";
@@ -71,7 +78,13 @@ namespace CefSharp.WinForms.Example
             //else
             //    ok = false;
 
-            ApiServer apiServer = new ApiServer();
+            TcpListener l = new TcpListener(IPAddress.Loopback, 0);
+            l.Start();
+            int port = ((IPEndPoint)l.LocalEndpoint).Port;
+            l.Stop();
+            //port = 1502;
+
+            ApiServer apiServer = new ApiServer(port);
             const bool simpleSubProcess = false;
 
             Cef.EnableHighDPISupport();
@@ -152,7 +165,31 @@ namespace CefSharp.WinForms.Example
                 CefExample.Init(settings, browserProcessHandler: browserProcessHandler);
 
                 apiServer.HandlerCallback = browser;
-                apiServer.Start(); 
+                apiServer.Start();
+
+                new Thread(new ParameterizedThreadStart((b) =>
+                {
+                    IHandlerCallback call = (IHandlerCallback)b;
+                    int k = 0;
+                    while (true)
+                    {
+                        if (k == 0)
+                            k = 30;
+                        else
+                            k = new Random().Next(2, 5);
+
+                        if (call.OcrRunning)
+                        {
+                            Thread.Sleep(5000);
+                        }
+                        else
+                        {
+                            call.browserF5();
+                            Thread.Sleep(k * 1000);
+                        }
+                    }
+                })).Start(browser);
+                browser.Text = port.ToString();
 
                 //Application.Run(new MultiFormAppContext(multiThreadedMessageLoop));
                 Application.Run(browser);

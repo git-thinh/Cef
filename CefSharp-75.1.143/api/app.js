@@ -1,13 +1,17 @@
-
+﻿
 //#region [ VARIABLE ]
+const _FS = require('fs');
 
-const ___ROOT_IMAGE = 'C:/Git/OCR/OCR_Accord.Tesseract/data-test/cmt';
+const ___ROOT_IMAGE = 'C:/ocr-images/';
+if (!_FS.existsSync(___ROOT_IMAGE)) { _FS.mkdirSync(___ROOT_IMAGE); }
+
 const ___PORT_API = 1502
-const ___URL_OCR_ENGINE = 'http://127.0.0.1:1501?files=';
+const ___PORT_OCR = 61667;
+const ___URL_OCR_ENGINE = 'http://127.0.0.1:' + ___PORT_OCR + '?files=';
+const ___URL_OCR_ENGINE_ACTIVE = 'http://127.0.0.1:' + ___PORT_OCR + '/stop-reload';
 
 const _NET = require('net');
 const _PATH = require('path');
-const _FS = require('fs');
 const _URL = require('url');
 
 const _JOB = require('cron').CronJob;
@@ -19,12 +23,14 @@ var _REQUEST = require('request');
 var _PROGRESS = require('request-progress');
 
 const ___DOWNLOAD_IMAGE = function (uri, path, onProgress, onResponse, onError, onEnd) {
+    const file = ___ROOT_IMAGE + path;
+
     _PROGRESS(_REQUEST(uri))
         .on('progress', onProgress)
         .on('response', onResponse)
         .on('error', onError)
         .on('end', onEnd)
-        .pipe(_FS.createWriteStream(path))
+        .pipe(_FS.createWriteStream(file))
 };
 
 //----------------------------------------------------------------------------
@@ -43,7 +49,7 @@ Object.keys(_IFACES).forEach(function (ifname) {
         if (iface.address && iface.address.indexOf('192.168.') != -1) IP___LOCAL = iface.address;
     });
 });
-console.log('-> IP = ' + IP___LOCAL);
+console.log('-> IP: ' + IP___LOCAL + ' API: ' + ___PORT_API + ' -> OCR: ' + ___PORT_OCR)
 
 //#endregion
 
@@ -84,41 +90,48 @@ new _JOB('* * * * * *', async function () {
             //console.log(f1, f2);
 
             ___DOWNLOAD_IMAGE(front_side, f1, function (state1) {
-                console.log("progress", state1);
+                //console.log("progress", state1);
             }, function (response1) {
-                console.log("status code", response1.statusCode);
+                //console.log("status code", response1.statusCode);
             }, function (error1) {
                 console.log("error", error1);
                 client.json({ ok: false });
             }, function () {
-                console.log("done");
+                //console.log("done");
                 //client.json({ ok: true });
 
                 ___DOWNLOAD_IMAGE(back_side, f2, function (state2) {
-                    console.log("progress", state2);
+                    //console.log("progress", state2);
                 }, function (response2) {
-                    console.log("status code", response2.statusCode);
+                    //console.log("status code", response2.statusCode);
                 }, function (error2) {
                     console.log("error", error2);
                     client.json({ ok: false });
                 }, function () {
-                    console.log("done");
+                    //console.log("done");
 
                     const key = f1 + ';' + f2;
                     console.log(key);
                     ___MSG_OUTPUT[key] = client;
 
-                        _FETCH(___URL_OCR_ENGINE + key)
+                        _FETCH(___URL_OCR_ENGINE_ACTIVE)
                             .then(res => res.text())
-                            .then(text => {
-                                console.log(text);
-                                if (text == 'INTERNAL_SERVER_ERROR' || text == 'NOT_FOUND') {
+                            .then(done => {
+                                console.log(done);
+                                if (done == 'DONE') {
+                                    _FETCH(___URL_OCR_ENGINE + key)
+                                        .then(res => res.text())
+                                        .then(text => {
+                                            console.log(text);
+                                            if (text == 'INTERNAL_SERVER_ERROR' || text == 'NOT_FOUND') {
 
-                                    if (___MSG_OUTPUT[key]) {
-                                        ___MSG_OUTPUT[key].json({ ok: false, message: text });
-                                        delete ___MSG_OUTPUT[key];
-                                    }
+                                                if (___MSG_OUTPUT[key]) {
+                                                    ___MSG_OUTPUT[key].json({ ok: false, message: text });
+                                                    delete ___MSG_OUTPUT[key];
+                                                }
 
+                                            }
+                                        });
                                 }
                             });
                 });
@@ -164,14 +177,79 @@ _HTTP_APP.get('/api/ocr', function (req, res) {
     }
 });
 
+const ___serial_Text = function (s) {
+    //const DataFront = "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\n_ Độc lập - Tự do - Hạnh phúc.\nGIẤY CHỨNG MINH NHÂN DÂN\nsố 092593.\nHọ tên: ĐÀO THẾ LONG\nNguyên quán:..\nSinh ngày 08-02-1992\nNguyên quán: Đa Tốn.\n- Gia Lâm, Hà Nội\nNơi ĐKHK thường trú: Thuan Ton.\nĐa Tốn, Gia Lâm, Ha Noi\n";
+    //const DataBack = "12/1\nDân tộc:..\nNGÓN TRỎ TRÁI | NGÓN TRỎ PHẢI\nTôn giáo khong ||\nDẤU VẾT RIÊNG VÀ DỊ HÌNH\nSeo chấm C15cmtren\nSau đuôi may phải\nNgày 11 tháng lônăm 2006\nGIÁM ĐỐC CA TP Ha Noi\nwe Dios Amante\n|\n|\n";
+    var o = {
+        address: "N/A",
+        id: "N/A",
+        fullname: "N/A",
+        birthday: "N/A",
+        expiry: "N/A",
+        gender: "N/A",
+        ethnicity: "N/A",
+        issue_by: "N/A",
+        issue_date: "N/A",
+        religion: "N/A",
+        status_code: 2,
+        status: "success",
+        t: ""
+    };
+
+    //var s = '';
+    //s = 'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\n_ Độc lập - Tự do - Hạnh phúc.\nGIẤY CHỨNG MINH NHÂN DÂN\nsố 092593.\nHọ tên: ĐÀO THẾ LONG\nNguyên quán:..\nSinh ngày 08-02-1992\nNguyên quán: Đa Tốn.\n- Gia Lâm, Hà Nội\nNơi ĐKHK thường trú: Thuan Ton.\nĐa Tốn, Gia Lâm, Ha Noi\n'.toLowerCase().trim();
+
+    var t = '', f = '', a = [];
+    t = s;
+
+    var k = t.indexOf('số');
+    if (k != -1) {
+        t = t.substr(k + 2, t.length - k - 2).trim();
+        o.id = t.split('\n')[0].replace(/[^\d]/g, '');
+        f = t.split('\n')[0];
+        t = t.substr(f.length + 1, t.length - f.length - 1);
+        o.t = t;
+    }
+
+
+    k = t.indexOf('tên');
+    if (k != -1) {
+        t = t.substr(k + 3, t.length - k - 3).trim();
+        o.fullname = t.split('\n')[0].split(':').join('').trim();
+        f = t.split('\n')[0];
+        t = t.substr(f.length + 1, t.length - f.length - 1);
+        o.t = t;
+    }
+
+    k = t.indexOf('ngày');
+    if (k != -1) {
+        t = t.substr(k + 4, t.length - k - 4).trim();
+        o.birthday = t.split('\n')[0].split(':').join('').trim();
+        f = t.split('\n')[0];
+        t = t.substr(f.length + 1, t.length - f.length - 1);
+        o.t = t;
+    }
+    
+    a = t.split('\n');
+    o.address = a[a.length - 1];
+
+    //console.log(o);
+
+    delete o.t;
+    return o;
+}
+
 _HTTP_APP.post('/api/ocr-cef', function (req, res) {
     const o = req.body;
-    console.log(o);
+    //console.log(o);
     
     if (o && o.files && o.files.length == 2) {
         const key = o.files.join(';');
         if (___MSG_OUTPUT[key]) {
-            ___MSG_OUTPUT[key].json(o);
+
+            var item = ___serial_Text(o.DataFront);
+            ___MSG_OUTPUT[key].json(item);
+
             delete ___MSG_OUTPUT[key];
         }
     }

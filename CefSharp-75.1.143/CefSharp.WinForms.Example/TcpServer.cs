@@ -76,5 +76,10 @@ namespace CefSharp.WinForms.Example
             m_streamCurrent.Write(reply, 0, reply.Length);
 
         }
+
+        public void SendOcrResult(OCR_BUF data)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

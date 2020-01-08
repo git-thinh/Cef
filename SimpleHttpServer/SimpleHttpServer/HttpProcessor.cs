@@ -71,7 +71,8 @@ namespace SimpleHttpServer
             
             // default to text/html content type
             if (!response.Headers.ContainsKey("Content-Type")) {
-                response.Headers["Content-Type"] = "text/html";
+                //response.Headers["Content-Type"] = "text/html";
+                response.Headers["Content-Type"] = "application/json; charset=utf-8";
             }
 
             response.Headers["Content-Length"] = response.Content.Length.ToString();
@@ -109,8 +110,12 @@ namespace SimpleHttpServer
 
         private static void Write(Stream stream, string text)
         {
-            byte[] bytes = Encoding.UTF8.GetBytes(text);
-            stream.Write(bytes, 0, bytes.Length);
+            try
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(text);
+                stream.Write(bytes, 0, bytes.Length);
+            }
+            catch { }
         }
 
         protected virtual Stream GetOutputStream(TcpClient tcpClient)
@@ -125,8 +130,12 @@ namespace SimpleHttpServer
 
         protected virtual HttpResponse RouteRequest(Stream inputStream, Stream outputStream, HttpRequest request)
         {
+            string url = request.Url.Split('?')[0];
 
-            List<Route> routes = this.Routes.Where(x => Regex.Match(request.Url, x.UrlRegex, RegexOptions.IgnoreCase).Success).ToList();
+            List<Route> routes = this.Routes.Where(x =>
+                url.Equals(x.UrlRegex, StringComparison.OrdinalIgnoreCase) ||
+                Regex.Match(url, x.UrlRegex, RegexOptions.IgnoreCase).Success
+            ).ToList();
 
             if (!routes.Any())
                 return HttpBuilder.NotFound();

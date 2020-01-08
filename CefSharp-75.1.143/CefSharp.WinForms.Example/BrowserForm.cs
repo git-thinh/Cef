@@ -24,6 +24,9 @@ namespace CefSharp.WinForms.Example
 {
     public partial class BrowserForm : Form, IHandlerCallback
     {
+        #region
+
+
         const bool VISIBLE_TOOLBAR = false;
 
         //private const string DefaultUrlForAddedTabs = "http://opencart.templatemela.com/OPCADD4/OPC094/";
@@ -40,7 +43,7 @@ namespace CefSharp.WinForms.Example
         {
             InitializeComponent();
 
-            
+
 
             _tcpClient = tcpClient;
             CheckForIllegalCrossThreadCalls = false;
@@ -121,7 +124,7 @@ namespace CefSharp.WinForms.Example
             browser.CreateControl();
 
             tabPage.Controls.Add(browser);
-            browser.Visible_Toolbar(VISIBLE_TOOLBAR );
+            browser.Visible_Toolbar(VISIBLE_TOOLBAR);
 
             if (insertIndex == null)
             {
@@ -196,6 +199,8 @@ namespace CefSharp.WinForms.Example
             {
                 return null;
             }
+
+            if (browserTabControl.Controls.Count == 0) return null;
 
             var tabPage = browserTabControl.Controls[browserTabControl.SelectedIndex];
             var control = tabPage.Controls[0] as BrowserTabUserControl;
@@ -712,6 +717,8 @@ namespace CefSharp.WinForms.Example
         {
             post_test();
         }
+        
+        #endregion
 
         static string root = ConfigurationManager.AppSettings["ROOT_PATH"];
         OCR_BUF ocr = null;
@@ -722,6 +729,7 @@ namespace CefSharp.WinForms.Example
             {
                 ocr = new OCR_BUF();
                 ocr.files = fileImage.Split(';');
+                OcrRunning = true;
                 postApiOcr(ocr.files[0]);
             }
         }
@@ -781,7 +789,7 @@ namespace CefSharp.WinForms.Example
             string s = "";
             string[] a = new string[] { };
             if (ocr.DataFront == null)
-            { 
+            {
                 a = new string[] { };
                 try
                 {
@@ -812,6 +820,8 @@ namespace CefSharp.WinForms.Example
                 {
                     s = "ERROR:" + ex.Message;
                 }
+
+                OcrRunning = false;
 
                 ocr.DataBack = s;
                 string json = JsonConvert.SerializeObject(ocr, Formatting.Indented);
@@ -848,12 +858,15 @@ namespace CefSharp.WinForms.Example
             //f.Controls.Add(new TextBox() { Multiline = true, Dock = DockStyle.Fill, Text = s, ScrollBars = ScrollBars.Both, BorderStyle = BorderStyle.None });
             //f.ShowDialog();
         }
+
+        public void browserF5()
+        {
+            var control = GetCurrentTabControl();
+            if (control != null)
+                control.Browser.Reload(false);
+        }
+
+        public bool OcrRunning { set; get; }
     }
 
-    public class OCR_BUF
-    {
-        public string[] files { set; get; }
-        public string DataFront { set; get; }
-        public string DataBack { set; get; }
-    }
 }

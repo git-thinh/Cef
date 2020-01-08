@@ -61,6 +61,17 @@ namespace SimpleHttpServer.Models
         public HttpResponse()
         {
             this.Headers = new Dictionary<string, string>();
+            ContentAsUTF8 = string.Empty;
+            ReasonPhrase = "OK";
+            StatusCode = "200";
+        }
+
+        public HttpResponse(string text): base()
+        {
+            this.Headers = new Dictionary<string, string>();
+            ContentAsUTF8 = text;
+            ReasonPhrase = "OK";
+            StatusCode = "200";
         }
 
         // informational only tostring...

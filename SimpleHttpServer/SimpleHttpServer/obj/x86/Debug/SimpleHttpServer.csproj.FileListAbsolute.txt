@@ -6,3 +6,4 @@ C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\bin\Debug\SimpleHttpServer.pdb
 C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\obj\x86\Debug\SimpleHttpServer.csproj.CopyComplete
 C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\obj\x86\Debug\SimpleHttpServer.dll
 C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\obj\x86\Debug\SimpleHttpServer.pdb
+C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\obj\x86\Debug\SimpleHttpServer.csprojAssemblyReference.cache
