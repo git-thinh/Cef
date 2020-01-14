@@ -1,9 +1,0 @@
-C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\bin\Debug\Resources\Pages\404.html
-C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\bin\Debug\Resources\Pages\500.html
-C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\bin\Debug\SimpleHttpServer.dll.config
-C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\bin\Debug\SimpleHttpServer.dll
-C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\bin\Debug\SimpleHttpServer.pdb
-C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\obj\x86\Debug\SimpleHttpServer.csproj.CopyComplete
-C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\obj\x86\Debug\SimpleHttpServer.dll
-C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\obj\x86\Debug\SimpleHttpServer.pdb
-C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\obj\x86\Debug\SimpleHttpServer.csprojAssemblyReference.cache

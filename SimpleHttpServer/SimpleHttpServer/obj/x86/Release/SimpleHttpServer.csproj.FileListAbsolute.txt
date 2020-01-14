@@ -1,1 +1,0 @@
-C:\Git\Cef\SimpleHttpServer\SimpleHttpServer\obj\x86\Release\SimpleHttpServer.csprojAssemblyReference.cache

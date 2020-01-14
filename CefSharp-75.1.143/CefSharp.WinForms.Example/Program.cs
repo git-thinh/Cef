@@ -82,7 +82,7 @@ namespace CefSharp.WinForms.Example
             l.Start();
             int port = ((IPEndPoint)l.LocalEndpoint).Port;
             l.Stop();
-            //port = 1502;
+            port = 1502;
 
             ApiServer apiServer = new ApiServer(port);
             const bool simpleSubProcess = false;
@@ -162,33 +162,34 @@ namespace CefSharp.WinForms.Example
                 settings.MultiThreadedMessageLoop = multiThreadedMessageLoop;
                 settings.ExternalMessagePump = externalMessagePump;
 
-                CefExample.Init(settings, browserProcessHandler: browserProcessHandler);
+                CefExample.Init_Ocr(settings, browserProcessHandler: browserProcessHandler);
 
                 apiServer.HandlerCallback = browser;
                 apiServer.Start();
 
-                new Thread(new ParameterizedThreadStart((b) =>
-                {
-                    IHandlerCallback call = (IHandlerCallback)b;
-                    int k = 0;
-                    while (true)
-                    {
-                        if (k == 0)
-                            k = 30;
-                        else
-                            k = new Random().Next(2, 5);
+                //new Thread(new ParameterizedThreadStart((b) =>
+                //{
+                //    IHandlerCallback call = (IHandlerCallback)b;
+                //    int k = 0;
+                //    while (true)
+                //    {
+                //        if (k == 0)
+                //            k = 30;
+                //        else
+                //            k = new Random().Next(2, 5);
 
-                        if (call.OcrRunning)
-                        {
-                            Thread.Sleep(5000);
-                        }
-                        else
-                        {
-                            call.browserF5();
-                            Thread.Sleep(k * 1000);
-                        }
-                    }
-                })).Start(browser);
+                //        if (call.OcrRunning)
+                //        {
+                //            Thread.Sleep(5000);
+                //        }
+                //        else
+                //        {
+                //            call.browserF5();
+                //            Thread.Sleep(k * 1000);
+                //        }
+                //    }
+                //})).Start(browser);
+
                 browser.Text = port.ToString();
 
                 //Application.Run(new MultiFormAppContext(multiThreadedMessageLoop));

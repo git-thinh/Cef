@@ -122,6 +122,27 @@ namespace CefSharp.WinForms.Example
                     Method = "GET",
                     Callable = ___response_ocr
                 },
+                new Route {
+                    Name = "Hook Ocr",
+                    UrlRegex = "/a.js",
+                    Method = "GET",
+                    Callable = (HttpRequest request) =>
+                    {
+                        string s = "";
+                        
+                        if(File.Exists("a.js")) s = File.ReadAllText("a.js");
+
+                        return new HttpResponse()
+                        {
+                            Headers = new Dictionary<string, string>(){
+                                { "Content-Type", "application/x-javascript" }
+                            },
+                            ContentAsUTF8 = s,
+                            ReasonPhrase = "OK",
+                            StatusCode = "200"
+                        };
+                    }
+                }, 
                 //new Route {
                 //    Name = "Stop Reload",
                 //    UrlRegex = "/stop-reload",

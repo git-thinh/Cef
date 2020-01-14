@@ -29,10 +29,20 @@ namespace CefSharp.WinForms.Example
             _handlerCallback = handlerCallback;
 
             InitializeComponent();
+            
+            CefSharp.BrowserSettings browser_setting = new CefSharp.BrowserSettings();
+            browser_setting.FileAccessFromFileUrls = CefState.Enabled;
+            browser_setting.UniversalAccessFromFileUrls = CefState.Enabled;
+            browser_setting.WebSecurity = CefState.Enabled;
 
             var browser = new ChromiumWebBrowser(url)
             {
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                BrowserSettings = browser_setting
+            };
+            browser.IsBrowserInitializedChanged += (se, ev) =>
+            {
+                browser.ShowDevTools();
             };
 
             browserPanel.Controls.Add(browser);

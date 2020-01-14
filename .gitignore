@@ -25,3 +25,11 @@
 /CefSharp-75.1.143/CefSharp.Wpf.Example/bin
 /CefSharp-75.1.143/CefSharp.Wpf.Example/obj
 /CefSharp-75.1.143/api/node_modules
+/SimpleHttpServer/SimpleHttpServer/obj
+/SimpleHttpServer/SimpleHttpServer/bin
+/SimpleHttpServer/SimpleHttpServer.App/bin
+/SimpleHttpServer/SimpleHttpServer.App/obj
+/SimpleHttpServer/SimpleHttpServer.Test/bin
+/SimpleHttpServer/SimpleHttpServer.Test/obj
+/SimpleHttpServer/SimpleHttpServer.WebApp/bin
+/SimpleHttpServer/SimpleHttpServer.WebApp/obj

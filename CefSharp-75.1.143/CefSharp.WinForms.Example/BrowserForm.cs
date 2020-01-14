@@ -13,6 +13,7 @@ using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp.Example;
@@ -24,10 +25,11 @@ namespace CefSharp.WinForms.Example
 {
     public partial class BrowserForm : Form, IHandlerCallback
     {
+        const bool VISIBLE_TOOLBAR = true;
+
         #region
 
 
-        const bool VISIBLE_TOOLBAR = false;
 
         //private const string DefaultUrlForAddedTabs = "http://opencart.templatemela.com/OPCADD4/OPC094/";
         //private const string DefaultUrlForAddedTabs = "http://192.168.10.54:55555/";
@@ -42,8 +44,6 @@ namespace CefSharp.WinForms.Example
         public BrowserForm(bool multiThreadedMessageLoopEnabled, ITcpClient tcpClient)
         {
             InitializeComponent();
-
-
 
             _tcpClient = tcpClient;
             CheckForIllegalCrossThreadCalls = false;
@@ -60,7 +60,11 @@ namespace CefSharp.WinForms.Example
 
             this.multiThreadedMessageLoopEnabled = multiThreadedMessageLoopEnabled;
 
-            this.menuStrip1.Visible = false;
+            this.menuStrip1.Visible = VISIBLE_TOOLBAR;
+
+            this.Shown += (se, ev) =>
+            { 
+            };
         }
 
         public IContainer Components
@@ -717,7 +721,7 @@ namespace CefSharp.WinForms.Example
         {
             post_test();
         }
-        
+
         #endregion
 
         static string root = ConfigurationManager.AppSettings["ROOT_PATH"];
@@ -867,6 +871,83 @@ namespace CefSharp.WinForms.Example
         }
 
         public bool OcrRunning { set; get; }
+
+        private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var control = GetCurrentTabControl();
+            if (control != null)
+                control.Browser.Reload(false);
+        }
+
+        private void mouseClickToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var control = GetCurrentTabControl();
+            if (control != null)
+            {
+                int x = this.Width / 2;
+                int y = 100;// this.Height / 5;
+
+                //control.Browser.GetBrowser().GetHost().SendMouseClickEvent(x, y, MouseButtonType.Left, false, 1, CefEventFlags.None);
+                //System.Threading.Thread.Sleep(100);
+                //control.Browser.GetBrowser().GetHost().SendMouseClickEvent(0, 0, MouseButtonType.Left, true, 1, CefEventFlags.None);
+
+                MouseLeftDown(x, y);
+                MouseLeftUp(x, y);
+            }
+        }
+
+        public void MouseLeftDown(int x, int y)
+        {
+            var control = GetCurrentTabControl();
+            if (control != null)
+            {
+                control.Browser.GetBrowser().GetHost()
+                .SendMouseClickEvent(x, y, MouseButtonType.Left, false, 1, CefEventFlags.None);
+                Thread.Sleep(15);
+            }
+        }
+
+        public void MouseLeftUp(int x, int y)
+        {
+            var control = GetCurrentTabControl();
+            if (control != null)
+            {
+                control.Browser.GetBrowser().GetHost()
+                .SendMouseClickEvent(x, y, MouseButtonType.Left, true, 1, CefEventFlags.None);
+                Thread.Sleep(15);
+            }
+        }
+
+        public void HitEnter(int x, int y)
+        {
+            var control = GetCurrentTabControl();
+            if (control != null)
+            {
+                KeyEvent k = new KeyEvent
+                {
+                    WindowsKeyCode = 0x0D, // Enter
+                    FocusOnEditableField = true,
+                    IsSystemKey = false,
+                    Type = KeyEventType.KeyDown
+                };
+
+                control.Browser.GetBrowser().GetHost().SendKeyEvent(k);
+
+                Thread.Sleep(100);
+
+                k = new KeyEvent
+                {
+                    WindowsKeyCode = 0x0D, // Enter
+                    FocusOnEditableField = true,
+                    IsSystemKey = false,
+                    Type = KeyEventType.KeyUp
+                };
+
+                control.Browser.GetBrowser().GetHost().SendKeyEvent(k);
+
+                Thread.Sleep(100);
+            }
+        }
     }
 
 }

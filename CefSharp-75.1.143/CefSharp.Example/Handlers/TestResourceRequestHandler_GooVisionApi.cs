@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Runtime.Caching;
@@ -41,12 +42,25 @@ namespace CefSharp.Example.Handlers
         //private Dictionary<ulong, MemoryStreamResponseFilter> responseDictionary = new Dictionary<ulong, MemoryStreamResponseFilter>();
         protected override IResponseFilter GetResourceResponseFilter(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response)
         {
-            //var dataFilter = new MemoryStreamResponseFilter();
-            //responseDictionary.Add(request.Identifier, dataFilter);
-            //return dataFilter;
-            memoryStream = new MemoryStream();
-            return new StreamResponseFilter(memoryStream);
-            //return null;
+            var url = request.Url.Split('?')[0];
+            switch (url)
+            {
+                case "https://cloud.google.com/vision/docs/drag-and-drop":
+
+                    string URL_JS_HOOK_OCR = ConfigurationManager.AppSettings["URL_JS_HOOK_OCR"];
+                    return new AppendResponseFilter(System.Environment.NewLine + "<script src=\"" + URL_JS_HOOK_OCR + "\"></script>");
+                    //break;
+                default:
+                    //var dataFilter = new MemoryStreamResponseFilter();
+                    //responseDictionary.Add(request.Identifier, dataFilter);
+                    //return dataFilter;
+                    memoryStream = new MemoryStream();
+                    return new StreamResponseFilter(memoryStream);
+                    //return null;
+                    //break;
+            }
+
+            return null;
         }
 
         protected override void OnResourceLoadComplete(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response, UrlRequestStatus status, long receivedContentLength)
@@ -60,6 +74,11 @@ namespace CefSharp.Example.Handlers
 
                 switch (url)
                 {
+                    case "https://cloud.google.com/vision/docs/drag-and-drop":
+                        data = memoryStream.ToArray();
+                        len = data.Length;
+                        text = Encoding.UTF8.GetString(data);
+                        break;
                     case "https://cxl-services.appspot.com/proxy":
                         data = memoryStream.ToArray();
                         len = data.Length;
@@ -84,7 +103,7 @@ namespace CefSharp.Example.Handlers
     {
         public string description { get; set; }
     }
-    
+
     public class GOO_VISION_API_RES
     {
         public GOO_VISION_API_RES_TEXT[] textAnnotations { get; set; }
@@ -98,7 +117,8 @@ namespace CefSharp.Example.Handlers
     public class GOO_VISION_API_RET
     {
         public GOO_VISION_API_RET_ITEM[] requests { get; set; }
-        public GOO_VISION_API_RET(string image_base64) {
+        public GOO_VISION_API_RET(string image_base64)
+        {
             requests = new GOO_VISION_API_RET_ITEM[] { new GOO_VISION_API_RET_ITEM(image_base64) { } };
         }
     }
@@ -109,7 +129,8 @@ namespace CefSharp.Example.Handlers
         public GOO_VISION_API_RET_ITEM_FEATURE[] features { get; set; }
         public GOO_VISION_API_RET_ITEM_imageContext imageContext { get; set; }
 
-        public GOO_VISION_API_RET_ITEM(string image_base64) {
+        public GOO_VISION_API_RET_ITEM(string image_base64)
+        {
             this.image = new GOO_VISION_API_RET_ITEM_IMAGE() { content = image_base64 };
             this.features = new GOO_VISION_API_RET_ITEM_FEATURE[] { new GOO_VISION_API_RET_ITEM_FEATURE() { } };
             this.imageContext = new GOO_VISION_API_RET_ITEM_imageContext();
@@ -119,7 +140,8 @@ namespace CefSharp.Example.Handlers
     public class GOO_VISION_API_RET_ITEM_imageContext
     {
         public GOO_VISION_API_RET_ITEM_imageContext_cropHintsParams cropHintsParams { get; set; }
-        public GOO_VISION_API_RET_ITEM_imageContext() {
+        public GOO_VISION_API_RET_ITEM_imageContext()
+        {
             this.cropHintsParams = new GOO_VISION_API_RET_ITEM_imageContext_cropHintsParams();
         }
     }
@@ -127,7 +149,8 @@ namespace CefSharp.Example.Handlers
     public class GOO_VISION_API_RET_ITEM_imageContext_cropHintsParams
     {
         public float[] aspectRatios { get; set; }
-        public GOO_VISION_API_RET_ITEM_imageContext_cropHintsParams() {
+        public GOO_VISION_API_RET_ITEM_imageContext_cropHintsParams()
+        {
             this.aspectRatios = new float[] { 0.8f, 1.0f, 1.2f };
         }
     }
@@ -135,7 +158,8 @@ namespace CefSharp.Example.Handlers
     public class GOO_VISION_API_RET_ITEM_IMAGE
     {
         public string content { get; set; }
-        public GOO_VISION_API_RET_ITEM_IMAGE() {
+        public GOO_VISION_API_RET_ITEM_IMAGE()
+        {
             content = "";
         }
     }
@@ -145,7 +169,8 @@ namespace CefSharp.Example.Handlers
         public string type { get; set; }
         public int maxResults { get; set; }
 
-        public GOO_VISION_API_RET_ITEM_FEATURE() {
+        public GOO_VISION_API_RET_ITEM_FEATURE()
+        {
             this.maxResults = 50;
             this.type = "DOCUMENT_TEXT_DETECTION";
         }

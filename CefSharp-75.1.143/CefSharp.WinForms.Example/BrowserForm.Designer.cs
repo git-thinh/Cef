@@ -68,9 +68,11 @@ namespace CefSharp.WinForms.Example
             this.runFileDialogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadExtensionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.javascriptBindingStressTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.browserTabControl = new System.Windows.Forms.TabControl();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.postTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.browserTabControl = new System.Windows.Forms.TabControl();
+            this.mouseClickToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -385,19 +387,12 @@ namespace CefSharp.WinForms.Example
             this.javascriptBindingStressTestToolStripMenuItem.Text = "Javascript Binding Stress Test";
             this.javascriptBindingStressTestToolStripMenuItem.Click += new System.EventHandler(this.JavascriptBindingStressTestToolStripMenuItemClick);
             // 
-            // browserTabControl
-            // 
-            this.browserTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.browserTabControl.Location = new System.Drawing.Point(0, 24);
-            this.browserTabControl.Name = "browserTabControl";
-            this.browserTabControl.SelectedIndex = 0;
-            this.browserTabControl.Size = new System.Drawing.Size(730, 466);
-            this.browserTabControl.TabIndex = 2;
-            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.postTestToolStripMenuItem});
+            this.postTestToolStripMenuItem,
+            this.reloadToolStripMenuItem,
+            this.mouseClickToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(48, 20);
             this.toolStripMenuItem1.Text = "Hook";
@@ -408,6 +403,29 @@ namespace CefSharp.WinForms.Example
             this.postTestToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.postTestToolStripMenuItem.Text = "Post test";
             this.postTestToolStripMenuItem.Click += new System.EventHandler(this.postTestToolStripMenuItem_Click);
+            // 
+            // reloadToolStripMenuItem
+            // 
+            this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
+            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.reloadToolStripMenuItem.Text = "Reload";
+            this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
+            // 
+            // browserTabControl
+            // 
+            this.browserTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.browserTabControl.Location = new System.Drawing.Point(0, 24);
+            this.browserTabControl.Name = "browserTabControl";
+            this.browserTabControl.SelectedIndex = 0;
+            this.browserTabControl.Size = new System.Drawing.Size(730, 466);
+            this.browserTabControl.TabIndex = 2;
+            // 
+            // mouseClickToolStripMenuItem
+            // 
+            this.mouseClickToolStripMenuItem.Name = "mouseClickToolStripMenuItem";
+            this.mouseClickToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mouseClickToolStripMenuItem.Text = "Mouse click";
+            this.mouseClickToolStripMenuItem.Click += new System.EventHandler(this.mouseClickToolStripMenuItem_Click);
             // 
             // BrowserForm
             // 
@@ -471,5 +489,7 @@ namespace CefSharp.WinForms.Example
         private System.Windows.Forms.ToolStripMenuItem javascriptBindingStressTestToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem postTestToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reloadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mouseClickToolStripMenuItem;
     }
 }
