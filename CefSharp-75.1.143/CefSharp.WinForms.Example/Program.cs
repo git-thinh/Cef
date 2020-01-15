@@ -56,9 +56,13 @@ namespace CefSharp.WinForms.Example
 
     public class Program
     {
+        static ApiServer apiServer;
+
         [STAThread]
         public static int Main(string[] args)
         {
+            Thread.Sleep(1000);
+
             string root = ConfigurationManager.AppSettings["ROOT_PATH"];
             if (!Directory.Exists(root)) Directory.CreateDirectory(root);
 
@@ -84,7 +88,7 @@ namespace CefSharp.WinForms.Example
             l.Stop();
             port = 1502;
 
-            ApiServer apiServer = new ApiServer(port);
+            apiServer = new ApiServer(port);
             const bool simpleSubProcess = false;
 
             Cef.EnableHighDPISupport();
@@ -171,8 +175,8 @@ namespace CefSharp.WinForms.Example
 
                 // Cache
                 string cache = DateTime.Now.ToString("yyyyMMddHHmmss");
-                Directory.CreateDirectory("_cache/" + cache);
-                settings.CachePath = "_cache/" + cache;
+                Directory.CreateDirectory(@"c:\_cache\" + cache);
+                settings.CachePath = @"c:\_cache\" + cache;
 
                 // Disable cache
                 //--disable-application-cache
@@ -224,6 +228,10 @@ namespace CefSharp.WinForms.Example
                 //Application.Run(new MultiFormAppContext(multiThreadedMessageLoop));
                 Application.Run(browser);
             }
+
+            apiServer.Stop();
+            
+            Thread.Sleep(1000);
 
             return 0;
         }

@@ -178,7 +178,7 @@ namespace CefSharp.Example.Handlers
          
         protected override IResponseFilter GetResourceResponseFilter(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response)
         {
-            string URL_JS_HOOK_OCR;
+            //string URL_JS_HOOK_OCR;
             var url = request.Url.Split('?')[0];
             switch (url)
             {
@@ -188,9 +188,11 @@ namespace CefSharp.Example.Handlers
                     //{
                     //    return new AppendResponseFilter(System.Environment.NewLine + "<script src=\"" + URL_JS_HOOK_OCR + "\"></script>");
                     //}
-                    break;
+                    //break;
                 case "https://www.google.com/recaptcha/api2/payload":
                     // response captcha image 
+                    if (_handlerCallback != null && _handlerCallback.StepId == 2)
+                        _handlerCallback.captchaVisbleChooseImage();
                     break; 
                 case "https://www.google.com/recaptcha/api2/userverify":
                     // response token info
@@ -218,9 +220,11 @@ namespace CefSharp.Example.Handlers
                     //    break;
                     //case "https://www.google.com/recaptcha/api2/webworker.js":
                     //    break;
-                    case "https://www.google.com/recaptcha/api2/payload":
-                        // response captcha image 
-                        break;
+                    //case "https://www.google.com/recaptcha/api2/payload":
+                    //    // response captcha image 
+                    //    if (_handlerCallback != null)
+                    //        _handlerCallback.captchaVisbleChooseImage();
+                    //    break;
                     case "https://www.google.com/recaptcha/api2/userverify":
                         // response token info
                         data = memoryStream.ToArray();

@@ -1,6 +1,6 @@
 ﻿// Copyright (C) 2016 by David Jeske, Barend Erasmus and donated to the public domain
 
-using log4net;
+//using log4net;
 using SimpleHttpServer.Models;
 using System;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace SimpleHttpServer
 
         private List<Route> Routes = new List<Route>();
 
-        private static readonly ILog log = LogManager.GetLogger(typeof(HttpProcessor));
+        //private static readonly ILog log = LogManager.GetLogger(typeof(HttpProcessor));
 
         #endregion
 
@@ -163,7 +163,7 @@ namespace SimpleHttpServer
             try {
                 return route.Callable(request);
             } catch(Exception ex) {
-                log.Error(ex);
+                //log.Error(ex);
                 return HttpBuilder.InternalServerError();
             }
 

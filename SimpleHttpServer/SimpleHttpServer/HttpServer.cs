@@ -1,6 +1,6 @@
 ﻿// Copyright (C) 2016 by David Jeske, Barend Erasmus and donated to the public domain
 
-using log4net;
+//using log4net;
 using SimpleHttpServer;
 using SimpleHttpServer.Models;
 using System;
@@ -25,9 +25,14 @@ namespace SimpleHttpServer
 
         #endregion
 
-        private static readonly ILog log = LogManager.GetLogger(typeof(HttpServer));
+        //private static readonly ILog log = LogManager.GetLogger(typeof(HttpServer));
 
         #region Public Methods
+        public void Stop() {
+            this.IsActive = false;
+            this.Listener.Stop();
+        }
+
         public HttpServer(int port, List<Route> routes)
         {
             this.Port = port;
@@ -41,19 +46,23 @@ namespace SimpleHttpServer
 
         public void Listen()
         {
-            this.Listener = new TcpListener(IPAddress.Any, this.Port);
-            //this.Listener = new TcpListener(IPAddress.Any, 0);            
-            this.Listener.Start();
-            while (this.IsActive)
+            try
             {
-                TcpClient s = this.Listener.AcceptTcpClient();
-                Thread thread = new Thread(() =>
+                this.Listener = new TcpListener(IPAddress.Any, this.Port);
+                //this.Listener = new TcpListener(IPAddress.Any, 0);            
+                this.Listener.Start();
+                while (this.IsActive)
                 {
-                    this.Processor.HandleClient(s);
-                });
-                thread.Start();
-                Thread.Sleep(1);
+                    TcpClient s = this.Listener.AcceptTcpClient();
+                    Thread thread = new Thread(() =>
+                    {
+                        this.Processor.HandleClient(s);
+                    });
+                    thread.Start();
+                    Thread.Sleep(1);
+                }
             }
+            catch { }
         }
 
         #endregion

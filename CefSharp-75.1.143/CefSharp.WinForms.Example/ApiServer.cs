@@ -209,6 +209,10 @@ namespace CefSharp.WinForms.Example
             httpServer = new HttpServer(port, routes);
         }
 
+        public void Stop() {
+            httpServer.Stop();
+        }
+
         public void Start()
         {
             try

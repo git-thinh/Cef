@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Configuration;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace CefSharp.WinForms.Example
             //var bitness = Environment.Is64BitProcess ? "x64" : "x86";
             //this.Text = "CefSharp.WinForms.Example - " + bitness;
             //WindowState = FormWindowState.Maximized;
-            
+
             //Only perform layout when control has completly finished resizing
             ResizeBegin += (s, e) => SuspendLayout();
             ResizeEnd += (s, e) => ResumeLayout(true);
@@ -726,33 +727,95 @@ namespace CefSharp.WinForms.Example
         {
             Top = 0;
             Left = 0;
+            Width = 600;
+            Height = 560;
+
             //Width = 600; 
-            //Height = 560;
+            //Height = Screen.PrimaryScreen.WorkingArea.Height;
 
-            Width = 600; 
-            Height = Screen.PrimaryScreen.WorkingArea.Height;
+            var b1 = new Button() { Dock = DockStyle.None, Height = 22, Location = new Point(0, 0), Text = "Debug", Width = 50 };
+            b1.Click += (si, ei) => debug_command("OPEN_DEV_TOOL");
+            this.Controls.Add(b1);
+            b1.BringToFront();
 
-            var btn_test = new Button() { Dock = DockStyle.None, Location = new Point(0, 0), Text = "Debug", Width = 88 };
-            btn_test.Click += button_test_Click;
-            this.Controls.Add(btn_test);
-            btn_test.BringToFront();
+            var b2 = new Button() { Dock = DockStyle.None, Height = 22, Location = new Point(55, 0), Text = "ReStart", Width = 60 };
+            b2.Click += (si, ei) => debug_command("RE_OPEN");
+            this.Controls.Add(b2);
+            b2.BringToFront();
+
+            this.FormClosing += (se, ev) =>
+            {
+                ___exit();
+            };
         }
 
-        void button_test_Click(object sender, EventArgs e)
+        void debug_command(string cmd)
         {
+            switch (cmd)
+            {
+                case "OPEN_DEV_TOOL":
+                    ___show_DevTool();
+                    break;
+                case "RE_OPEN":
+                    ___exit(true);
+                    break;
+            }
         }
 
-        public void page_frameLoadEnd(string url) {
-            //Thread.Sleep(500);
-            //___clickAutoOnForm(this.Height - 10);
-            ////___show_DevTool();
+        void ___exit(bool isRestart = false)
+        {
+
+            if (isRestart)
+                Process.Start(Application.ExecutablePath, "");
+
+            Process.GetCurrentProcess().Kill();
+            //// Wait for the process to terminate
+            //Process process = null;
+            //try
+            //{
+            //    int pid = Process.GetCurrentProcess().Id;
+            //    process = Process.GetProcessById(pid);
+            //    process.WaitForExit(1000);
+            //}
+            //catch (ArgumentException ex)
+            //{
+            //    // ArgumentException to indicate that the 
+            //    // process doesn't exist?   LAME!!
+            //}
         }
 
-        public void browser_Ininited() { 
-        
+        public int StepId { set; get; }
+
+        public void page_frameLoadEnd(string url)
+        {
+            StepId = 1;
+
+            var control = GetCurrentTabControl();
+            if (control != null)
+            {
+                if (File.Exists("a.js"))
+                {
+                    string js = "";
+                    //js = "document.body.style.overflow = 'hidden'";
+                    js = File.ReadAllText("a.js");
+                    control.Browser.GetBrowser().MainFrame.ExecuteJavaScriptAsync(js);
+
+                    Thread.Sleep(500);
+                    ___clickAutoOnForm(this.Height / 3);
+                }
+            }
         }
 
-        public void response_tokenInfo(string data) {
+        public void browser_Ininited()
+        {
+            var control = GetCurrentTabControl();
+            if (control != null)
+            {
+            }
+        }
+
+        public void response_tokenInfo(string data)
+        {
             MessageBox.Show(data);
         }
 
@@ -904,13 +967,20 @@ namespace CefSharp.WinForms.Example
 
         public bool OcrRunning { set; get; }
 
-        public void captchaVisble()
+        public void captchaVisbleChooseImage()
         {
-            //Thread.Sleep(500);
-            //___clickAutoOnForm();
+            //___exit(true);
         }
 
-        void ___clickAutoOnForm(int y = 150) {
+        public void captchaVisble()
+        {
+            StepId = 2;
+            Thread.Sleep(500);
+            ___clickAutoOnForm();
+        }
+
+        void ___clickAutoOnForm(int y = 150)
+        {
             var control = GetCurrentTabControl();
             if (control != null)
             {
@@ -922,7 +992,8 @@ namespace CefSharp.WinForms.Example
             }
         }
 
-        void ___show_DevTool() {
+        void ___show_DevTool()
+        {
             var control = GetCurrentTabControl();
             if (control != null)
                 control.Browser.ShowDevTools();

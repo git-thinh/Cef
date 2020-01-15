@@ -49,14 +49,14 @@ namespace CefSharp.WinForms.Example
 
             Browser = browser;
 
-            //browser.FrameLoadEnd += (object sender, FrameLoadEndEventArgs args) =>
-            //{
-            //    if (args.Frame.IsMain)
-            //    {
-            //        args.Browser.MainFrame.ExecuteJavaScriptAsync("document.body.style.overflow = 'hidden'");
-            //        _handlerCallback.page_frameLoadEnd(args.Url);
-            //    }
-            //};
+            browser.FrameLoadEnd += (object sender, FrameLoadEndEventArgs args) =>
+            {
+                if (args.Frame.IsMain)
+                {
+                    //args.Browser.MainFrame.ExecuteJavaScriptAsync("document.body.style.overflow = 'hidden'");
+                    _handlerCallback.page_frameLoadEnd(args.Url);
+                }
+            };
 
             browser.DialogHandler = new TempFileDialogHandler();
 

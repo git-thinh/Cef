@@ -9,7 +9,10 @@ namespace CefSharp.Example
     public interface IHandlerCallback
     {
         bool OcrRunning { set; get; }
+        int StepId { set; get; }
+
         void captchaVisble();
+        void captchaVisbleChooseImage();
         void page_frameLoadEnd(string url);
         void response_tokenInfo(string data);
         void browser_Ininited();
