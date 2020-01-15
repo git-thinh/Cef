@@ -54,7 +54,7 @@ namespace CefSharp.WinForms.Example
                 if (args.Frame.IsMain)
                 {
                     //args.Browser.MainFrame.ExecuteJavaScriptAsync("document.body.style.overflow = 'hidden'");
-                    _handlerCallback.page_frameLoadEnd(args.Url);
+                    _handlerCallback.browser_onFrameLoadEnd(args.Url);
                 }
             };
 

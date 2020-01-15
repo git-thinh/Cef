@@ -729,11 +729,11 @@ namespace CefSharp.WinForms.Example
 
             Top = 0;
             Left = 0;
-            Width = 600;
-            Height = 560;
+            //Width = 600;
+            //Height = 560;
 
-            //Width = 600; 
-            //Height = Screen.PrimaryScreen.WorkingArea.Height;
+            Width = 1024;
+            Height = 768;
 
             var b1 = new Button() { Dock = DockStyle.None, Height = 22, Location = new Point(0, 0), Text = "Debug", Width = 50 };
             b1.Click += (si, ei) => debug_command("OPEN_DEV_TOOL");
@@ -770,25 +770,12 @@ namespace CefSharp.WinForms.Example
             if (isRestart)
                 Process.Start(Application.ExecutablePath, "");
 
-            Process.GetCurrentProcess().Kill();
-            //// Wait for the process to terminate
-            //Process process = null;
-            //try
-            //{
-            //    int pid = Process.GetCurrentProcess().Id;
-            //    process = Process.GetProcessById(pid);
-            //    process.WaitForExit(1000);
-            //}
-            //catch (ArgumentException ex)
-            //{
-            //    // ArgumentException to indicate that the 
-            //    // process doesn't exist?   LAME!!
-            //}
+            Process.GetCurrentProcess().Kill(); 
         }
 
         public int StepId { set; get; }
 
-        public void page_frameLoadEnd(string url)
+        public void browser_onFrameLoadEnd(string url)
         {
             StepId = 1;
 
@@ -797,18 +784,22 @@ namespace CefSharp.WinForms.Example
             {
                 if (File.Exists("a.js"))
                 {
-                    string js = "";
-                    //js = "document.body.style.overflow = 'hidden'";
-                    js = File.ReadAllText("a.js");
+                    string js = File.ReadAllText("a.js");
                     control.Browser.GetBrowser().MainFrame.ExecuteJavaScriptAsync(js);
 
-                    Thread.Sleep(500);
-                    ___clickAutoOnForm(this.Height / 3);
+                    Thread.Sleep(200);
+                    ___clickAutoOnForm();
                 }
             }
         }
+        public void captcha_visbleCheckNotBeRobot()
+        {
+            StepId = 2;
+            Thread.Sleep(300);
+            ___clickAutoOnForm();
+        }
 
-        public void browser_Ininited()
+        public void browser_onIninited()
         {
             var control = GetCurrentTabControl();
             if (control != null)
@@ -823,7 +814,7 @@ namespace CefSharp.WinForms.Example
 
         static string root = ConfigurationManager.AppSettings["ROOT_PATH"];
         OCR_BUF ocr = null;
-        public void requestOcr(string fileImage)
+        public void ocr_request_actractImage2Text(string fileImage)
         {
             ocr = null;
             if (fileImage.Split(';').Length == 2)
@@ -944,7 +935,7 @@ namespace CefSharp.WinForms.Example
             }
         }
 
-        public void browserF5()
+        public void browser_goF5()
         {
             var control = GetCurrentTabControl();
             if (control != null)
@@ -954,22 +945,15 @@ namespace CefSharp.WinForms.Example
         public bool OcrRunning { set; get; }
 
         static bool AUTO_RE_START_IF_REQUEST_TOKEN_FAIL = ConfigurationManager.AppSettings["AUTO_RE_START_IF_REQUEST_TOKEN_FAIL"] == "1" ? true : false;
-        public void captchaVisbleChooseImage()
+        public void captcha_visbleChooseImage()
         {
             if (AUTO_RE_START_IF_REQUEST_TOKEN_FAIL)
-            {
-                int timeOut = new Random().Next(1000, 3999);
-                Thread.Sleep(timeOut);
+            { 
+                //Thread.Sleep(300);
                 ___exit(true);
             }
         }
 
-        public void captchaVisble()
-        {
-            StepId = 2;
-            Thread.Sleep(500);
-            ___clickAutoOnForm();
-        }
 
         void ___clickAutoOnForm(int y = 150)
         {

@@ -11,13 +11,16 @@ namespace CefSharp.Example
         bool OcrRunning { set; get; }
         int StepId { set; get; }
 
-        void captchaVisble();
-        void captchaVisbleChooseImage();
-        void page_frameLoadEnd(string url);
+        void captcha_visbleCheckNotBeRobot();
+        void captcha_visbleChooseImage();
+
+        void browser_onFrameLoadEnd(string url);
+        void browser_onIninited();
+        void browser_goF5();
+        
+        void ocr_request_actractImage2Text(string fileImage);
+
         void response_tokenInfo(string data);
-        void browser_Ininited();
-        void browserF5();
-        void requestOcr(string fileImage);
         void response_calbackSuccess(string url, string input, string data);
     }
 }

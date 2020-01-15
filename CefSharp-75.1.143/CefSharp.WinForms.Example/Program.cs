@@ -5,6 +5,7 @@
 using System;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
@@ -61,9 +62,18 @@ namespace CefSharp.WinForms.Example
         [STAThread]
         public static int Main(string[] args)
         {
+            //string ss = string.Join(Environment.NewLine, File.ReadAllLines("UserAgent.txt").Where(x => x.Contains("(") && x.Contains("/")));
+            //File.WriteAllText("UserAgent.txt", ss);
+            //return 0;
+
             Thread.Sleep(1000);
 
+            string[] a = File.ReadAllLines("UserAgent.txt");
+            string s = a[new Random().Next(0, a.Length - 1)]; 
+
+            #region
             string root = ConfigurationManager.AppSettings["ROOT_PATH"];
+
 
             if (!Directory.Exists(root)) Directory.CreateDirectory(root);
 
@@ -105,13 +115,13 @@ namespace CefSharp.WinForms.Example
                     return exitCode;
                 }
 
-#if DEBUG
-                if (!System.Diagnostics.Debugger.IsAttached)
-                {
-                    MessageBox.Show("When running this Example outside of Visual Studio " +
-                                    "please make sure you compile in `Release` mode.", "Warning");
-                }
-#endif
+                //#if DEBUG
+                //                if (!System.Diagnostics.Debugger.IsAttached)
+                //                {
+                //                    MessageBox.Show("When running this Example outside of Visual Studio " +
+                //                                    "please make sure you compile in `Release` mode.", "Warning");
+                //                }
+                //#endif
 
                 var settings = new CefSettings();
                 settings.BrowserSubprocessPath = "CefSharp.WinForms.Example.exe";
@@ -124,13 +134,13 @@ namespace CefSharp.WinForms.Example
             }
             else
             {
-#if DEBUG
-                if (!System.Diagnostics.Debugger.IsAttached)
-                {
-                    MessageBox.Show("When running this Example outside of Visual Studio " +
-                                    "please make sure you compile in `Release` mode.", "Warning");
-                }
-#endif
+                //#if DEBUG
+                //                if (!System.Diagnostics.Debugger.IsAttached)
+                //                {
+                //                    MessageBox.Show("When running this Example outside of Visual Studio " +
+                //                                    "please make sure you compile in `Release` mode.", "Warning");
+                //                }
+                //#endif
 
                 //When multiThreadedMessageLoop = true then externalMessagePump must be set to false
                 // To enable externalMessagePump set  multiThreadedMessageLoop = false and externalMessagePump = true
@@ -173,17 +183,23 @@ namespace CefSharp.WinForms.Example
 
                 //Enables Uncaught exception handler
                 settings.UncaughtExceptionStackSize = 10;
+                settings.UserAgent = s;
 
                 // Cache
-                string cache = DateTime.Now.ToString("yyyyMMddHHmmss");
-                Directory.CreateDirectory(@"c:\_cache\" + cache);
-                settings.CachePath = @"c:\_cache\" + cache;
+                string PATH_CACHE_DIR = ConfigurationManager.AppSettings["PATH_CACHE_DIR"];
+                if (Directory.Exists(PATH_CACHE_DIR)) Directory.Delete(PATH_CACHE_DIR, true);
+                string cache = Path.Combine(PATH_CACHE_DIR, DateTime.Now.ToString("yyyyMMddHHmmss"));
+                Directory.CreateDirectory(cache);
+                settings.CachePath = cache;
+
+                //-------------------------------------------------------------------------------------
 
                 // Disable cache
                 //--disable-application-cache
                 //--disable-cache
                 //--disable-gpu-program-cache
                 //--disable-gpu-shader-disk-cache
+
                 //settings.CachePath = null;
                 //settings.CefCommandLineArgs.Add("disable-application-cache", "1");
                 //settings.CefCommandLineArgs.Add("disable-cache", "1");
@@ -192,9 +208,10 @@ namespace CefSharp.WinForms.Example
                 //settings.CefCommandLineArgs.Add("disable-gpu-shader-disk-cache", "1");
                 //settings.CefCommandLineArgs.Add("disable-session-storage", "1");
 
+
                 CefExample.Init_Ocr(settings, browserProcessHandler: browserProcessHandler);
 
-                //Cef.GetGlobalCookieManager().DeleteCookies("", "");
+                Cef.GetGlobalCookieManager().DeleteCookies("", "");
 
                 //-------------------------------------------------------------------------------------
 
@@ -231,10 +248,11 @@ namespace CefSharp.WinForms.Example
             }
 
             apiServer.Stop();
-            
+
             Thread.Sleep(1000);
 
             return 0;
+            #endregion
         }
     }
 }

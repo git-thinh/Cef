@@ -90,7 +90,7 @@ namespace CefSharp.WinForms.Example
 
                     //Thread.Sleep(1000);
 
-                    HandlerCallback.requestOcr(files);
+                    HandlerCallback.ocr_request_actractImage2Text(files);
                 }
             }
             else

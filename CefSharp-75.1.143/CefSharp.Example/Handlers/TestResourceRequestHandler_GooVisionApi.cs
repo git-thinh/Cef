@@ -192,7 +192,7 @@ namespace CefSharp.Example.Handlers
                 case "https://www.google.com/recaptcha/api2/payload":
                     // response captcha image 
                     if (_handlerCallback != null && _handlerCallback.StepId == 2)
-                        _handlerCallback.captchaVisbleChooseImage();
+                        _handlerCallback.captcha_visbleChooseImage();
                     break; 
                 case "https://www.google.com/recaptcha/api2/userverify":
                     // response token info
@@ -239,7 +239,7 @@ namespace CefSharp.Example.Handlers
                         if (request.ReferrerUrl != null && request.ReferrerUrl.Contains("https://www.google.com/recaptcha/api2/webworker.js"))
                         {
                             if (_handlerCallback != null)
-                                _handlerCallback.captchaVisble();
+                                _handlerCallback.captcha_visbleCheckNotBeRobot();
                         } 
                         break;
                     case "https://cxl-services.appspot.com/proxy":
