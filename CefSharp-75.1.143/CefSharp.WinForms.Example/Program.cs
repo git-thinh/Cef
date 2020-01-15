@@ -186,11 +186,11 @@ namespace CefSharp.WinForms.Example
                 settings.UserAgent = s;
 
                 // Cache
-                string PATH_CACHE_DIR = ConfigurationManager.AppSettings["PATH_CACHE_DIR"];
-                if (Directory.Exists(PATH_CACHE_DIR)) Directory.Delete(PATH_CACHE_DIR, true);
-                string cache = Path.Combine(PATH_CACHE_DIR, DateTime.Now.ToString("yyyyMMddHHmmss"));
-                Directory.CreateDirectory(cache);
-                settings.CachePath = cache;
+                //string PATH_CACHE_DIR = ConfigurationManager.AppSettings["PATH_CACHE_DIR"];
+                //if (Directory.Exists(PATH_CACHE_DIR)) Directory.Delete(PATH_CACHE_DIR, true);
+                //string cache = Path.Combine(PATH_CACHE_DIR, DateTime.Now.ToString("yyyyMMddHHmmss"));
+                //Directory.CreateDirectory(cache);
+                //settings.CachePath = cache;
 
                 //-------------------------------------------------------------------------------------
 
@@ -200,13 +200,13 @@ namespace CefSharp.WinForms.Example
                 //--disable-gpu-program-cache
                 //--disable-gpu-shader-disk-cache
 
-                //settings.CachePath = null;
-                //settings.CefCommandLineArgs.Add("disable-application-cache", "1");
-                //settings.CefCommandLineArgs.Add("disable-cache", "1");
+                settings.CachePath = null;
+                settings.CefCommandLineArgs.Add("disable-application-cache", "1");
+                settings.CefCommandLineArgs.Add("disable-cache", "1");
 
-                //settings.CefCommandLineArgs.Add("disable-gpu-program-cache", "1");
-                //settings.CefCommandLineArgs.Add("disable-gpu-shader-disk-cache", "1");
-                //settings.CefCommandLineArgs.Add("disable-session-storage", "1");
+                settings.CefCommandLineArgs.Add("disable-gpu-program-cache", "1");
+                settings.CefCommandLineArgs.Add("disable-gpu-shader-disk-cache", "1");
+                settings.CefCommandLineArgs.Add("disable-session-storage", "1");
 
 
                 CefExample.Init_Ocr(settings, browserProcessHandler: browserProcessHandler);
