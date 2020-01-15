@@ -953,9 +953,15 @@ namespace CefSharp.WinForms.Example
 
         public bool OcrRunning { set; get; }
 
+        static bool AUTO_RE_START_IF_REQUEST_TOKEN_FAIL = ConfigurationManager.AppSettings["AUTO_RE_START_IF_REQUEST_TOKEN_FAIL"] == "1" ? true : false;
         public void captchaVisbleChooseImage()
         {
-            //___exit(true);
+            if (AUTO_RE_START_IF_REQUEST_TOKEN_FAIL)
+            {
+                int timeOut = new Random().Next(1000, 3999);
+                Thread.Sleep(timeOut);
+                ___exit(true);
+            }
         }
 
         public void captchaVisble()

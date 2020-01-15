@@ -64,6 +64,7 @@ namespace CefSharp.WinForms.Example
             Thread.Sleep(1000);
 
             string root = ConfigurationManager.AppSettings["ROOT_PATH"];
+
             if (!Directory.Exists(root)) Directory.CreateDirectory(root);
 
             //string p = "";
