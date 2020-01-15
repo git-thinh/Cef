@@ -18,6 +18,6 @@ namespace CefSharp.Example
         void browser_Ininited();
         void browserF5();
         void requestOcr(string fileImage);
-        void responseCalback(string url, string input, string data);
+        void response_calbackSuccess(string url, string input, string data);
     }
 }

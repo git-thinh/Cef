@@ -255,7 +255,9 @@ namespace CefSharp.Example.Handlers
                         browser.StopLoad();
 
                         if (_handlerCallback != null)
-                            _handlerCallback.responseCalback(request.Url, Encoding.UTF8.GetString(request.PostData.Elements[0].Bytes), text);
+                            _handlerCallback.response_calbackSuccess(request.Url, Encoding.UTF8.GetString(request.PostData.Elements[0].Bytes), text);
+
+
                         #endregion
                         break;
                 }

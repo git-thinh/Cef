@@ -725,6 +725,8 @@ namespace CefSharp.WinForms.Example
 
         void form_Shown(object sender, EventArgs e)
         {
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+
             Top = 0;
             Left = 0;
             Width = 600;
@@ -877,13 +879,26 @@ namespace CefSharp.WinForms.Example
             }
             else
             {
-                responseCalback(fileImage, "", "");
+                response_calbackSuccess(fileImage, "", "");
             }
         }
 
-        public void responseCalback(string url, string input, string data)
+        public void response_calbackSuccess(string url, string input, string data)
         {
-            if (ocr == null) return;
+            if (ocr == null)
+            {
+                StepId = 3;
+                var control = GetCurrentTabControl();
+                if (control != null)
+                {
+                    if (File.Exists("ok.js"))
+                    {
+                        string js = File.ReadAllText("ok.js");
+                        control.Browser.GetBrowser().MainFrame.ExecuteJavaScriptAsync(js);
+                    }
+                }
+                return;
+            }
 
             string s = "";
             string[] a = new string[] { };
@@ -927,35 +942,6 @@ namespace CefSharp.WinForms.Example
                 ocr = null;
                 _tcpClient.SendOcrResult(json);
             }
-
-            //string[] a = new string[] { };
-            //try
-            //{
-            //    var o = JsonConvert.DeserializeObject<GOO_VISION_API>(data);
-            //    if (o.responses.Length > 0)
-            //        a = o.responses[0].textAnnotations.Select(x => x.description).ToArray();
-            //}
-            //catch (Exception ex)
-            //{
-            //    string sm = ex.Message;
-            //}
-
-            //////var control = GetCurrentTabControl();
-            //////if (control != null)
-            //////{
-            //////    string uri = control.Browser.GetFocusedFrame().Url;
-            //////    if (uri != DefaultUrlForAddedTabs)
-            //////    {
-            //////        //control.Browser.Back();
-            //////        control.Browser.Load("javascript:setTimeout(window.history.back,100);");
-            //////    }
-            //////}
-
-            //string s = a.Length > 0 ? a[0] : "";
-            //s = s.Replace("\n", Environment.NewLine);
-            //var f = new Form() { WindowState = FormWindowState.Maximized };
-            //f.Controls.Add(new TextBox() { Multiline = true, Dock = DockStyle.Fill, Text = s, ScrollBars = ScrollBars.Both, BorderStyle = BorderStyle.None });
-            //f.ShowDialog();
         }
 
         public void browserF5()
