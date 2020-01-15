@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -64,7 +65,7 @@ namespace CefSharp.WinForms.Example
             if (request.Url.Contains("?") == false)
                 return new HttpResponse(new OCR_RESULT("QueryString is null").getStringJson());
 
-            string files = string.Empty;
+            string files = string.Empty,front_side = string.Empty,back_side = string.Empty;
             string queryString = request.Url.Split('?')[1];
             if (queryString[0] == '/') queryString = queryString.Substring(1);
             if (!string.IsNullOrEmpty(queryString))
@@ -73,8 +74,8 @@ namespace CefSharp.WinForms.Example
                 if (paras != null && paras.HasKeys())
                 {
                     HandlerCallback.OcrRunning = true;
-                    var front_side = paras.Get("front_side");
-                    var back_side = paras.Get("back_side");
+                    front_side = paras.Get("front_side");
+                    back_side = paras.Get("back_side");
 
                     var f1 = SaveImage(front_side);
                     var f2 = SaveImage(back_side);
@@ -96,6 +97,8 @@ namespace CefSharp.WinForms.Example
                 return new HttpResponse(new OCR_RESULT("QueryString is null").getStringJson());
 
             _EVENT.WaitOne();
+
+            _RESULT.urls = new string[] { front_side, back_side };
 
             return new HttpResponse(new OCR_RESULT(true, _RESULT).getStringJson());
         }
@@ -123,19 +126,55 @@ namespace CefSharp.WinForms.Example
                     Callable = ___response_ocr
                 },
                 new Route {
-                    Name = "Hook Ocr",
+                    Name = "Hook Ocr JS",
+                    UrlRegex = "/vision.min.js",
+                    Method = "GET",
+                    Callable = (HttpRequest request) =>
+                    {
+                        string s = "";
+                        if(File.Exists("vision.min.js")) s = File.ReadAllText("vision.min.js");
+                        return new HttpResponse()
+                        {
+                            Headers = new Dictionary<string, string>(){
+                                { "Content-Type", "application/x-javascript" }
+                            },
+                            ContentAsUTF8 = s,
+                            ReasonPhrase = "OK",
+                            StatusCode = "200"
+                        };
+                    }
+                },
+                new Route {
+                    Name = "Hook Ocr JS",
                     UrlRegex = "/a.js",
                     Method = "GET",
                     Callable = (HttpRequest request) =>
                     {
                         string s = "";
-                        
                         if(File.Exists("a.js")) s = File.ReadAllText("a.js");
-
                         return new HttpResponse()
                         {
                             Headers = new Dictionary<string, string>(){
                                 { "Content-Type", "application/x-javascript" }
+                            },
+                            ContentAsUTF8 = s,
+                            ReasonPhrase = "OK",
+                            StatusCode = "200"
+                        };
+                    }
+                },
+                new Route {
+                    Name = "Hook Ocr CSS",
+                    UrlRegex = "/a.css",
+                    Method = "GET",
+                    Callable = (HttpRequest request) =>
+                    {
+                        string s = "";
+                        if(File.Exists("a.css")) s = File.ReadAllText("a.css");
+                        return new HttpResponse()
+                        {
+                            Headers = new Dictionary<string, string>(){
+                                { "Content-Type", "text/css" }
                             },
                             ContentAsUTF8 = s,
                             ReasonPhrase = "OK",
@@ -198,6 +237,13 @@ namespace CefSharp.WinForms.Example
         }
     }
 
+    public enum OCR_DATA_TYPE
+    {
+        NONE,
+        DATE_TIME_BIRTHDAY,
+        DATE_TIME_EXPIRY
+    }
+
     public class OCR_RESULT
     {
         public string address = "N/A";
@@ -210,6 +256,10 @@ namespace CefSharp.WinForms.Example
         public string issue_by = "N/A";
         public string issue_date = "N/A";
         public string religion = "N/A";
+
+        public string signal_description = "N/A";
+        public string date_active = "N/A";
+
         public int status_code = 2;
         public string status = "success";
 
@@ -223,78 +273,131 @@ namespace CefSharp.WinForms.Example
             ocr_error = message_error;
         }
 
+        string ___remove_startWith(string s, string startWith_ = ".")
+        {
+            while (s.StartsWith(startWith_)) s = s.Substring(startWith_.Length).Trim();
+            return s.Trim();
+        }
+
+        string ___remove_endWith(string s, string startWith_ = ".")
+        {
+            while (s.EndsWith(startWith_)) s = s.Substring(0, s.Length - startWith_.Length).Trim();
+            return s.Trim();
+        }
+
+        string[] ___extract_startWith(string t, string startWith_, 
+            int numberLineOutput = 1, int numberWordOutput = -1, OCR_DATA_TYPE type = OCR_DATA_TYPE.NONE)
+        {
+            if (string.IsNullOrEmpty(t)) return new string[] { string.Empty, string.Empty, string.Empty };
+
+            string v = "", err = "";
+            try
+            {
+                int k = t.ToLower().IndexOf(startWith_);
+                if (k != -1)
+                {
+                    k = k + startWith_.Length;
+                    t = t.Substring(k, t.Length - k).Trim();
+                    t = ___remove_startWith(t, ".");
+                    t = ___remove_startWith(t, ":");
+
+                    v = string.Join(" ", t.Split('\n').Where((x, i) => i < numberLineOutput)).Trim();
+
+                    k = v.Length;
+                    t = t.Substring(k, t.Length - k).Trim();
+                    t = ___remove_startWith(t, ".");
+                    t = ___remove_startWith(t, ":");
+                }
+            }
+            catch (Exception ex)
+            {
+                err = ex.Message;
+            }
+
+            v = ___remove_endWith(v, ".").Trim();
+            switch (type)
+            {
+                case OCR_DATA_TYPE.DATE_TIME_BIRTHDAY:
+                case OCR_DATA_TYPE.DATE_TIME_EXPIRY:
+                    //v = Regex.Replace(v, @"[^\d]", " ").Trim();
+                    v = Regex.Replace(v, @"[^0-9]", " ").Trim();
+                    break;
+            }
+
+            v = ___remove_endWith(v, ".").Trim();
+
+            if (numberWordOutput > 0) 
+                v = string.Join(" ", v.Split(' ').Where((x, i) => i < numberWordOutput).ToArray());
+
+            // Replace multi space
+            v = Regex.Replace(v, @"\s+", " ").Trim();
+
+            switch (type)
+            {
+                case OCR_DATA_TYPE.DATE_TIME_BIRTHDAY:
+                case OCR_DATA_TYPE.DATE_TIME_EXPIRY:
+                    v = v.Replace(' ', '-');
+                    break;
+            }
+
+            return new string[] { v, t, err };
+        }
+
         public OCR_RESULT(bool ok_, OCR_BUF data_)
         {
             var o = this;
             o.ok = ok_;
             o.ocr_result = data_;
 
-            string s = data_.DataFront.Trim();
-
-            string t = "", f = "";
+            string s = data_.DataFront.Trim(),  err = string.Empty;             
             string[] a;
-            t = s;
 
-            var k = t.ToLower().IndexOf("số");
-            if (k != -1)
-            {
-                t = t.Substring(k + 2, t.Length - k - 2).Trim();
-                f = t.Split('\n')[0];
-                if (f.IndexOf(':') != -1) f = f.Split(':')[1].Trim();
-                while (f.StartsWith(".")) f = f.Substring(1).Trim();
-                if (f[f.Length - 1] == '.') f = f.Substring(0, f.Length - 1).Trim();
-                f = Regex.Replace(f, @"\s+", " ").Trim();
-                o.id = f;
+            // id
+            a = ___extract_startWith(s, "số");
+            o.id = a[0];
+            if (err.Length == 0) err = a[2];
 
-                f = t.Split('\n')[0];
-                t = t.Substring(f.Length + 1, t.Length - f.Length - 1); 
-            }
+            // fullname
+            a = ___extract_startWith(s, "tên");
+            o.fullname = a[0];
+            if (err.Length == 0) err = a[2];
+
+            // birthday
+            a = ___extract_startWith(s, "ngày", 1, -1, OCR_DATA_TYPE.DATE_TIME_BIRTHDAY);
+            o.birthday = a[0];
+            if (err.Length == 0) err = a[2];
+
+            // address
+            a = ___extract_startWith(s, "trú", 2);
+            o.address = a[0];
+            if (err.Length == 0) err = a[2];
+
+            // expiry
+            a = ___extract_startWith(s, "giá trị đến", 1, -1, OCR_DATA_TYPE.DATE_TIME_BIRTHDAY);
+            o.expiry = a[0];
+            if (err.Length == 0) err = a[2];
+
+            // expiry
+            a = ___extract_startWith(s, "giới tính", 1, 1);
+            o.gender = a[0];
+            if (err.Length == 0) err = a[2];
+
+            //---------------------
+
+            s = data_.DataBack.Trim();
+
+            // signal_description
+            a = ___extract_startWith(s, "nhận dạng", 2, -1);
+            o.signal_description = a[0];
+            if (err.Length == 0) err = a[2];
+
+            // signal_description
+            a = ___extract_startWith(s, "ngày", 1, -1, OCR_DATA_TYPE.DATE_TIME_BIRTHDAY);
+            o.date_active = a[0];
+            if (err.Length == 0) err = a[2];
 
 
-            k = t.ToLower().IndexOf("tên");
-            if (k != -1)
-            {
-                t = t.Substring(k + 3, t.Length - k - 3).Trim();
-                f = t.Split('\n')[0].Replace(":", "").Trim();
-                if (f.IndexOf(':') != -1) f = f.Split(':')[1].Trim();
-                while (f.StartsWith(".")) f = f.Substring(1).Trim();
-                if (f[f.Length - 1] == '.') f = f.Substring(0, f.Length - 1).Trim();
-                f = Regex.Replace(f, @"\s+", " ").Trim();
-                o.fullname = f;
-
-                f = t.Split('\n')[0];
-                t = t.Substring(f.Length + 1, t.Length - f.Length - 1);
-            }
-
-            k = t.ToLower().IndexOf("ngày");
-            if (k != -1)
-            {
-                t = t.Substring(k + 4, t.Length - k - 4).Trim();
-                f = t.Split('\n')[0].Replace(":", "").Trim();
-                if (f.IndexOf(':') != -1) f = f.Split(':')[1].Trim();
-                while (f.StartsWith(".")) f = f.Substring(1).Trim();
-                if (f[f.Length - 1] == '.') f = f.Substring(0, f.Length - 1).Trim(); 
-                f = Regex.Replace(f, @"\s+", " ").Trim();
-                o.birthday = f;
-
-                f = t.Split('\n')[0];
-                t = t.Substring(f.Length + 1, t.Length - f.Length - 1);
-            }
-             
-            k = t.ToLower().IndexOf("trú");
-            if (k != -1)
-            {
-                t = t.Substring(k + 3, t.Length - k - 3).Trim();
-                f = t;
-                if (f.IndexOf(':') != -1) f = f.Split(':')[1].Trim();
-                while (f.StartsWith(".")) f = f.Substring(1).Trim();
-                if (f[f.Length - 1] == '.') f = f.Substring(0, f.Length - 1).Trim();
-                f = f.Replace("\n", " ").Trim();
-                f = Regex.Replace(f, @"\.+", " ").Trim();
-                f = Regex.Replace(f, @"\s+", " ").Trim();
-                o.address = f;
-            }
-
+            ocr_error = err;
         }
 
         public string getStringJson()
@@ -306,6 +409,7 @@ namespace CefSharp.WinForms.Example
     public class OCR_BUF
     {
         public string[] files { set; get; }
+        public string[] urls { set; get; }
         public string DataFront { set; get; }
         public string DataBack { set; get; }
     }

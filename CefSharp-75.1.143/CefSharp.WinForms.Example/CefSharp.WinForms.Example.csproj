@@ -91,6 +91,7 @@
       <DependentUpon>BrowserTabUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ChromeWidgetMessageInterceptor.cs" />
+    <Compile Include="CustomMenuHandler.cs" />
     <Compile Include="Handlers\DisplayHandler.cs" />
     <Compile Include="Handlers\KeyboardHandler.cs" />
     <Compile Include="Handlers\LifeSpanHandler.cs" />
@@ -129,6 +130,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ApiServer.cs" />
+    <Compile Include="TempFileDialogHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AboutBox.resx">
@@ -202,7 +204,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="a.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="a.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="vision.min - Copy.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="vision.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

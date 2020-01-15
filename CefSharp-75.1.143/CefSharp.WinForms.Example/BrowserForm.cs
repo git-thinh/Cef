@@ -25,11 +25,9 @@ namespace CefSharp.WinForms.Example
 {
     public partial class BrowserForm : Form, IHandlerCallback
     {
-        const bool VISIBLE_TOOLBAR = true;
+        const bool VISIBLE_CONTROLS_DEBUG = false;
 
         #region
-
-
 
         //private const string DefaultUrlForAddedTabs = "http://opencart.templatemela.com/OPCADD4/OPC094/";
         //private const string DefaultUrlForAddedTabs = "http://192.168.10.54:55555/";
@@ -48,24 +46,24 @@ namespace CefSharp.WinForms.Example
             _tcpClient = tcpClient;
             CheckForIllegalCrossThreadCalls = false;
 
-            var bitness = Environment.Is64BitProcess ? "x64" : "x86";
-            Text = "";// "CefSharp.WinForms.Example - " + bitness;
-            WindowState = FormWindowState.Maximized;
-
-            Load += BrowserFormLoad;
-
+            //var bitness = Environment.Is64BitProcess ? "x64" : "x86";
+            //this.Text = "CefSharp.WinForms.Example - " + bitness;
+            //WindowState = FormWindowState.Maximized;
+            
             //Only perform layout when control has completly finished resizing
             ResizeBegin += (s, e) => SuspendLayout();
             ResizeEnd += (s, e) => ResumeLayout(true);
 
             this.multiThreadedMessageLoopEnabled = multiThreadedMessageLoopEnabled;
 
-            this.menuStrip1.Visible = VISIBLE_TOOLBAR;
+            this.MaximizeBox = false;
+            this.Text = string.Empty;
+            this.menuStrip1.Visible = VISIBLE_CONTROLS_DEBUG;
+            this.Shown += form_Shown;
+            this.Load += BrowserFormLoad;
 
-            this.Shown += (se, ev) =>
-            { 
-            };
         }
+
 
         public IContainer Components
         {
@@ -118,7 +116,7 @@ namespace CefSharp.WinForms.Example
                 Dock = DockStyle.Fill,
             };
 
-            var tabPage = new TabPage(url)
+            var tabPage = new TabPage(string.Empty)
             {
                 Dock = DockStyle.Fill
             };
@@ -128,7 +126,7 @@ namespace CefSharp.WinForms.Example
             browser.CreateControl();
 
             tabPage.Controls.Add(browser);
-            browser.Visible_Toolbar(VISIBLE_TOOLBAR);
+            browser.Visible_Toolbar(VISIBLE_CONTROLS_DEBUG);
 
             if (insertIndex == null)
             {
@@ -724,6 +722,40 @@ namespace CefSharp.WinForms.Example
 
         #endregion
 
+        void form_Shown(object sender, EventArgs e)
+        {
+            Top = 0;
+            Left = 0;
+            //Width = 600; 
+            //Height = 560;
+
+            Width = 600; 
+            Height = Screen.PrimaryScreen.WorkingArea.Height;
+
+            var btn_test = new Button() { Dock = DockStyle.None, Location = new Point(0, 0), Text = "Debug", Width = 88 };
+            btn_test.Click += button_test_Click;
+            this.Controls.Add(btn_test);
+            btn_test.BringToFront();
+        }
+
+        void button_test_Click(object sender, EventArgs e)
+        {
+        }
+
+        public void page_frameLoadEnd(string url) {
+            //Thread.Sleep(500);
+            //___clickAutoOnForm(this.Height - 10);
+            ////___show_DevTool();
+        }
+
+        public void browser_Ininited() { 
+        
+        }
+
+        public void response_tokenInfo(string data) {
+            MessageBox.Show(data);
+        }
+
         static string root = ConfigurationManager.AppSettings["ROOT_PATH"];
         OCR_BUF ocr = null;
         public void requestOcr(string fileImage)
@@ -872,6 +904,32 @@ namespace CefSharp.WinForms.Example
 
         public bool OcrRunning { set; get; }
 
+        public void captchaVisble()
+        {
+            //Thread.Sleep(500);
+            //___clickAutoOnForm();
+        }
+
+        void ___clickAutoOnForm(int y = 150) {
+            var control = GetCurrentTabControl();
+            if (control != null)
+            {
+                int x = this.Width / 2;
+                //int y = 150;
+
+                MouseLeftDown(x, y);
+                MouseLeftUp(x, y);
+            }
+        }
+
+        void ___show_DevTool() {
+            var control = GetCurrentTabControl();
+            if (control != null)
+                control.Browser.ShowDevTools();
+        }
+
+        #region [ MOUSE RAISE CLICK ]
+
         private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var control = GetCurrentTabControl();
@@ -948,6 +1006,9 @@ namespace CefSharp.WinForms.Example
                 Thread.Sleep(100);
             }
         }
+
+        #endregion
+
     }
 
 }

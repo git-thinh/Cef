@@ -42,14 +42,27 @@ namespace CefSharp.WinForms.Example
             };
             browser.IsBrowserInitializedChanged += (se, ev) =>
             {
-                browser.ShowDevTools();
+                //browser.ShowDevTools();
             };
 
             browserPanel.Controls.Add(browser);
 
             Browser = browser;
 
-            browser.MenuHandler = new MenuHandler();
+            //browser.FrameLoadEnd += (object sender, FrameLoadEndEventArgs args) =>
+            //{
+            //    if (args.Frame.IsMain)
+            //    {
+            //        args.Browser.MainFrame.ExecuteJavaScriptAsync("document.body.style.overflow = 'hidden'");
+            //        _handlerCallback.page_frameLoadEnd(args.Url);
+            //    }
+            //};
+
+            browser.DialogHandler = new TempFileDialogHandler();
+
+            //browser.MenuHandler = new MenuHandler();
+            browser.MenuHandler = new CustomMenuHandler();
+
             browser.RequestHandler = new WinFormsRequestHandler(openNewTab, url, _handlerCallback);
             browser.JsDialogHandler = new JsDialogHandler();
             browser.DownloadHandler = new DownloadHandler();
@@ -101,8 +114,13 @@ namespace CefSharp.WinForms.Example
 
             CefExample.RegisterTestResources(browser);
 
-            var version = String.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}", Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion);
+            //var version = String.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}", Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion);
             //DisplayOutput(version);
+
+            toolStrip2.Visible = false;
+            outputLabel.Visible = false;
+            statusLabel.Visible = false;
+            toolStrip1.Visible = false;
         }
 
         /// <summary>
@@ -147,12 +165,12 @@ namespace CefSharp.WinForms.Example
                 return;
             }
 
-            DisplayOutput("Load Error:" + args.ErrorCode + ";" + args.ErrorText);
+            //DisplayOutput("Load Error:" + args.ErrorCode + ";" + args.ErrorText);
         }
 
         private void OnBrowserConsoleMessage(object sender, ConsoleMessageEventArgs args)
         {
-            DisplayOutput(string.Format("Line: {0}, Source: {1}, Message: {2}", args.Line, args.Source, args.Message));
+            //DisplayOutput(string.Format("Line: {0}, Source: {1}, Message: {2}", args.Line, args.Source, args.Message));
         }
 
         private void OnBrowserStatusMessage(object sender, StatusMessageEventArgs args)
@@ -170,7 +188,7 @@ namespace CefSharp.WinForms.Example
 
         private void OnBrowserTitleChanged(object sender, TitleChangedEventArgs args)
         {
-            this.InvokeOnUiThreadIfRequired(() => Parent.Text = args.Title);
+            //this.InvokeOnUiThreadIfRequired(() => Parent.Text = args.Title);
         }
 
         private void OnBrowserAddressChanged(object sender, AddressChangedEventArgs args)
@@ -224,7 +242,7 @@ namespace CefSharp.WinForms.Example
         private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         public void Visible_Toolbar(bool visible = false) {
-            this.toolStrip1.Visible = visible;
+            //this.toolStrip1.Visible = visible;
         }
 
         private void OnIsBrowserInitializedChanged(object sender, EventArgs e)

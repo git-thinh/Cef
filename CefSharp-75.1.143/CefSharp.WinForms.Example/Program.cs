@@ -158,11 +158,40 @@ namespace CefSharp.WinForms.Example
 
                 }
 
+                //-------------------------------------------------------------------------------------
+
                 var settings = new CefSettings();
+                //settings.LogSeverity = LogSeverity.Verbose;
+
                 settings.MultiThreadedMessageLoop = multiThreadedMessageLoop;
                 settings.ExternalMessagePump = externalMessagePump;
 
+                //Enables Uncaught exception handler
+                settings.UncaughtExceptionStackSize = 10;
+
+                // Cache
+                string cache = DateTime.Now.ToString("yyyyMMddHHmmss");
+                Directory.CreateDirectory("_cache/" + cache);
+                settings.CachePath = "_cache/" + cache;
+
+                // Disable cache
+                //--disable-application-cache
+                //--disable-cache
+                //--disable-gpu-program-cache
+                //--disable-gpu-shader-disk-cache
+                //settings.CachePath = null;
+                //settings.CefCommandLineArgs.Add("disable-application-cache", "1");
+                //settings.CefCommandLineArgs.Add("disable-cache", "1");
+
+                //settings.CefCommandLineArgs.Add("disable-gpu-program-cache", "1");
+                //settings.CefCommandLineArgs.Add("disable-gpu-shader-disk-cache", "1");
+                //settings.CefCommandLineArgs.Add("disable-session-storage", "1");
+
                 CefExample.Init_Ocr(settings, browserProcessHandler: browserProcessHandler);
+
+                //Cef.GetGlobalCookieManager().DeleteCookies("", "");
+
+                //-------------------------------------------------------------------------------------
 
                 apiServer.HandlerCallback = browser;
                 apiServer.Start();
