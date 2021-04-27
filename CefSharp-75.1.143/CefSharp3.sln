@@ -95,6 +95,24 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "extensions", "Debug\extensi
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "50752"
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_50752"
+		Debug.AspNetCompiler.PhysicalPath = "Debug\extensions\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50752\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_50752"
+		Release.AspNetCompiler.PhysicalPath = "Debug\extensions\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_50752\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "50752"
 		SlnRelativePath = "Debug\extensions\"
 	EndProjectSection
 EndProject
@@ -107,6 +125,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleHttpServer.Test", "..\SimpleHttpServer\SimpleHttpServer.Test\SimpleHttpServer.Test.csproj", "{A04B89BA-8FB7-44F1-8343-BB51ED1017A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleHttpServer.WebApp", "..\SimpleHttpServer\SimpleHttpServer.WebApp\SimpleHttpServer.WebApp.csproj", "{52C884A2-B53B-4893-9F4F-F91F096D00B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GooDriver", "GooDriver\GooDriver.csproj", "{848422B6-D851-494B-A2AD-C53BC06465F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -298,6 +318,16 @@ Global
 		{52C884A2-B53B-4893-9F4F-F91F096D00B0}.Release|Win32.Build.0 = Release|Any CPU
 		{52C884A2-B53B-4893-9F4F-F91F096D00B0}.Release|x64.ActiveCfg = Release|Any CPU
 		{52C884A2-B53B-4893-9F4F-F91F096D00B0}.Release|x64.Build.0 = Release|Any CPU
+		{848422B6-D851-494B-A2AD-C53BC06465F9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{848422B6-D851-494B-A2AD-C53BC06465F9}.Debug|Win32.ActiveCfg = Debug|x86
+		{848422B6-D851-494B-A2AD-C53BC06465F9}.Debug|Win32.Build.0 = Debug|x86
+		{848422B6-D851-494B-A2AD-C53BC06465F9}.Debug|x64.ActiveCfg = Debug|x64
+		{848422B6-D851-494B-A2AD-C53BC06465F9}.Debug|x64.Build.0 = Debug|x64
+		{848422B6-D851-494B-A2AD-C53BC06465F9}.Release|Any CPU.ActiveCfg = Release|x86
+		{848422B6-D851-494B-A2AD-C53BC06465F9}.Release|Win32.ActiveCfg = Release|x86
+		{848422B6-D851-494B-A2AD-C53BC06465F9}.Release|Win32.Build.0 = Release|x86
+		{848422B6-D851-494B-A2AD-C53BC06465F9}.Release|x64.ActiveCfg = Release|x64
+		{848422B6-D851-494B-A2AD-C53BC06465F9}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

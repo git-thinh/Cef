@@ -183,13 +183,17 @@ namespace CefSharp.WinForms.Example
 
                 //Enables Uncaught exception handler
                 settings.UncaughtExceptionStackSize = 10;
-                //settings.UserAgent = s;
+                //settings.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36";
 
                 // Cache
-                string PATH_CACHE_DIR = ConfigurationManager.AppSettings["PATH_CACHE_DIR"];
-                //if (Directory.Exists(PATH_CACHE_DIR)) Directory.Delete(PATH_CACHE_DIR, true);
-                string cache = Path.Combine(PATH_CACHE_DIR, DateTime.Now.ToString("yyyyMMddHHmmss"));
-                Directory.CreateDirectory(cache);
+                //////string PATH_CACHE_DIR = ConfigurationManager.AppSettings["PATH_CACHE_DIR"];
+                //////if (Directory.Exists(PATH_CACHE_DIR)) Directory.Delete(PATH_CACHE_DIR, true);
+                //////string cache = Path.Combine(PATH_CACHE_DIR, DateTime.Now.ToString("yyyyMMddHHmmss"));
+                //////Directory.CreateDirectory(cache);
+                //////settings.CachePath = cache;
+
+                string cache = @"C:\_cache\goodriver";
+                if (!Directory.Exists(cache)) Directory.CreateDirectory(cache);
                 settings.CachePath = cache;
 
                 //-------------------------------------------------------------------------------------

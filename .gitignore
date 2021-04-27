@@ -36,3 +36,5 @@
 /backup
 /Build/Releasex86
 /Build/Debugx86
+/CefSharp-75.1.143/GooDriver/obj
+/CefSharp-75.1.143/GooDriver/bin

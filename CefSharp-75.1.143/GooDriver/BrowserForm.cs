@@ -32,8 +32,8 @@ namespace CefSharp.WinForms.Example
         //private const string DefaultUrlForAddedTabs = "https://cloud.google.com/vision/docs/drag-and-drop";
         private const string DefaultUrlForAddedTabs = "https://drive.google.com/drive/u/0/folders/1819YHOo7QfEf4H_0GDwp5UJkD6HGOzN1";
 
-        #region
 
+        #region
 
         // Default to a small increment:
         private const double ZoomIncrement = 0.10;
@@ -780,18 +780,18 @@ namespace CefSharp.WinForms.Example
         {
             StepId = 1;
 
-            //var control = GetCurrentTabControl();
-            //if (control != null)
-            //{
-            //    if (File.Exists("a.js"))
-            //    {
-            //        string js = File.ReadAllText("a.js");
-            //        control.Browser.GetBrowser().MainFrame.ExecuteJavaScriptAsync(js);
+            ////var control = GetCurrentTabControl();
+            ////if (control != null)
+            ////{
+            ////    if (File.Exists("a.js"))
+            ////    {
+            ////        string js = File.ReadAllText("a.js");
+            ////        control.Browser.GetBrowser().MainFrame.ExecuteJavaScriptAsync(js);
 
-            //        Thread.Sleep(200);
-            //        ___clickAutoOnForm();
-            //    }
-            //}
+            ////        Thread.Sleep(200);
+            ////        ___clickAutoOnForm();
+            ////    }
+            ////}
         }
         public void captcha_visbleCheckNotBeRobot()
         {
